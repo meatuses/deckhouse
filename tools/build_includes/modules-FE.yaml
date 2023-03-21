@@ -44,11 +44,6 @@
   stageDependencies:
     setup:
         - '**/*.go'
-- add: /ee/modules/110-istio
-  to: /deckhouse/modules/110-istio
-  stageDependencies:
-    setup:
-        - '**/*.go'
 - add: /ee/modules/140-user-authz/templates/webhook
   to: /deckhouse/modules/140-user-authz/templates/webhook
   stageDependencies:
