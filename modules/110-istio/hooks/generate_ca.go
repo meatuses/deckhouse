@@ -15,8 +15,8 @@ import (
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
 	"github.com/deckhouse/deckhouse/go_lib/certificate"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
 )
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{

@@ -13,9 +13,9 @@ import (
 	"github.com/flant/addon-operator/sdk"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
+	"github.com/deckhouse/deckhouse/go_lib/jwt"
 	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
 	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal/crd"
-	"github.com/deckhouse/deckhouse/go_lib/jwt"
 )
 
 type IstioFederationMergeCrdInfo struct {

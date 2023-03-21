@@ -17,9 +17,9 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
+	"github.com/deckhouse/deckhouse/go_lib/telemetry"
 	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
 	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal/istio_versions"
-	"github.com/deckhouse/deckhouse/go_lib/telemetry"
 )
 
 const (
