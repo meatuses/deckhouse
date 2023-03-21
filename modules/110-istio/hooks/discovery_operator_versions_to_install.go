@@ -14,7 +14,7 @@ import (
 	"github.com/flant/addon-operator/sdk"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
-	"github.com/deckhouse/deckhouse/ee/modules/110-istio/hooks/internal"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
 	"github.com/deckhouse/deckhouse/ee/modules/110-istio/hooks/internal/crd"
 	"github.com/deckhouse/deckhouse/ee/modules/110-istio/hooks/internal/istio_versions"
 )
