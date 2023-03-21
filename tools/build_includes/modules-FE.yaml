@@ -44,8 +44,18 @@
   stageDependencies:
     setup:
         - '**/*.go'
-- add: /ee/modules/110-istio
-  to: /deckhouse/modules/110-istio
+- add: /ee/modules/110-istio/templates/alliance
+  to: /deckhouse/modules/110-istio/templates/alliance
+  stageDependencies:
+    setup:
+        - '**/*.go'
+- add: /ee/modules/110-istio/templates/federation
+  to: /deckhouse/modules/110-istio/templates/federation
+  stageDependencies:
+    setup:
+        - '**/*.go'
+- add: /ee/modules/110-istio/templates/multicluster
+  to: /deckhouse/modules/110-istio/templates/multicluster
   stageDependencies:
     setup:
         - '**/*.go'

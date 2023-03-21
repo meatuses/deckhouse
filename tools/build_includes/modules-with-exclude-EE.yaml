@@ -76,8 +76,30 @@
     - .namespace
     - values_matrix_test.yaml
     - .build.yaml
-- add: /ee/modules/110-istio
-  to: /deckhouse/modules/110-istio
+- add: /ee/modules/110-istio/templates/alliance
+  to: /deckhouse/modules/110-istio/templates/alliance
+  excludePaths:
+    - docs
+    - README.md
+    - images
+    - hooks/**/*.go
+    - template_tests
+    - .namespace
+    - values_matrix_test.yaml
+    - .build.yaml
+- add: /ee/modules/110-istio/templates/federation
+  to: /deckhouse/modules/110-istio/templates/federation
+  excludePaths:
+    - docs
+    - README.md
+    - images
+    - hooks/**/*.go
+    - template_tests
+    - .namespace
+    - values_matrix_test.yaml
+    - .build.yaml
+- add: /ee/modules/110-istio/templates/multicluster
+  to: /deckhouse/modules/110-istio/templates/multicluster
   excludePaths:
     - docs
     - README.md
