@@ -7,16 +7,15 @@ package hooks
 
 import (
 	"fmt"
-	"os"
 	"sort"
 
 	"github.com/Masterminds/semver/v3"
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
 	"github.com/deckhouse/deckhouse/go_lib/dependency"
 	"github.com/deckhouse/deckhouse/go_lib/hooks/ensure_crds"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
 )
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
@@ -55,8 +54,5 @@ func ensureCRDs(input *go_hook.HookInput, dc dependency.Container) error {
 	CRDversionToInstall := fmt.Sprintf("%d.%d", semvers[len(semvers)-1].Major(), semvers[len(semvers)-1].Minor())
 
 	prefix := "/deckhouse/"
-	if os.Getenv("D8_IS_TESTS_ENVIRONMENT") != "" {
-		prefix += "ee/"
-	}
 	return ensure_crds.EnsureCRDsHandler(prefix+"modules/110-istio/crds/istio/"+CRDversionToInstall+"/*.yaml")(input, dc)
 }
