@@ -7,6 +7,8 @@ package template_tests
 
 import (
 	"encoding/base64"
+	"os"
+	"path/filepath"
 	"testing"
 
 	. "github.com/onsi/ginkgo"
@@ -110,7 +112,53 @@ const istioValues = `
             max: "2Gi"
 `
 
+func getSubdirs(dir string) ([]string, error) {
+	var subdirs []string
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() && path != dir && filepath.Base(path) == info.Name() {
+			subdirs = append(subdirs, info.Name())
+			return filepath.SkipDir
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return subdirs, nil
+}
+
+const (
+	istioEETempaltesPath = "/deckhouse/ee/modules/110-istio/templates/"
+	istioCETempaltesPath = "/deckhouse/modules/110-istio/templates/"
+)
+
 var _ = Describe("Module :: istio :: helm template :: main", func() {
+
+	BeforeSuite(func() {
+		subDirs, err := getSubdirs(istioEETempaltesPath)
+		Expect(err).ShouldNot(HaveOccurred())
+		for _, subDir := range subDirs {
+			err := os.Symlink(istioEETempaltesPath+subDir, istioCETempaltesPath+subDir)
+			Expect(err).ShouldNot(HaveOccurred())
+		}
+	})
+
+	AfterSuite(func() {
+		subDirs, err := getSubdirs(istioEETempaltesPath)
+		Expect(err).ShouldNot(HaveOccurred())
+		for _, subDir := range subDirs {
+			err := os.Remove(istioCETempaltesPath + subDir)
+			Expect(err).ShouldNot(HaveOccurred())
+		}
+	})
+
 	f := SetupHelmConfig(``)
 
 	Context("no federations or multiclusters", func() {
