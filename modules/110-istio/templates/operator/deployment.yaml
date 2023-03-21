@@ -3,6 +3,11 @@ cpu: 25m
 memory: 100Mi
 {{- end }}
 
+{{- define "istio_proxy_resources" }}
+cpu: 50m
+memory: 100Mi
+{{- end }}
+
 {{- range $version := .Values.istio.internal.operatorVersionsToInstall }}
   {{- $versionInfo := get $.Values.istio.internal.versionMap $version }}
   {{ $imageSuffix := get $versionInfo "imageSuffix" }}
