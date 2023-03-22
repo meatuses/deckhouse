@@ -9,7 +9,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
 	. "github.com/deckhouse/deckhouse/testing/hooks"
 )
 
@@ -54,7 +54,7 @@ type PodIstiodTemplateParams struct {
 }
 
 func podIstiodYaml(podParams PodIstiodTemplateParams) string {
-	return internal.TemplateToYAML(podIstiodTemplate, podParams)
+	return go_lib_istio.TemplateToYAML(podIstiodTemplate, podParams)
 }
 
 var _ = Describe("Istio hooks :: discovery istiod health ::", func() {

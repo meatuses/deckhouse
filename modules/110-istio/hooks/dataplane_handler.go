@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook/metrics"
 	"github.com/flant/addon-operator/sdk"
@@ -18,8 +19,8 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
 	"github.com/deckhouse/deckhouse/go_lib/telemetry"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal/istio_versions"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/istio_versions"
 )
 
 const (
@@ -33,7 +34,7 @@ const (
 )
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
-	Queue: internal.Queue("dataplane-handler"),
+	Queue: go_lib_istio.Queue("dataplane-handler"),
 	Kubernetes: []go_hook.KubernetesConfig{
 		{
 			Name:       "namespaces_global_revision",

@@ -8,11 +8,12 @@ package hooks
 import (
 	"fmt"
 
+
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
 )
 
 type IstioIngressGatewayController struct {
@@ -22,7 +23,7 @@ type IstioIngressGatewayController struct {
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
 	OnBeforeHelm: &go_hook.OrderedConfig{Order: 10},
-	Queue:        internal.Queue("istio-ingress-gateway-controller"),
+	Queue:        go_lib_istio.Queue("istio-ingress-gateway-controller"),
 	Kubernetes: []go_hook.KubernetesConfig{
 		{
 			Name:       "controller",

@@ -11,14 +11,16 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/deckhouse/deckhouse/go_lib/dependency"
 	"github.com/deckhouse/deckhouse/go_lib/telemetry"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal/istio_versions"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/istio_versions"
 )
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
@@ -70,19 +72,19 @@ func revisionsDiscovery(input *go_hook.HookInput, dc dependency.Container) error
 
 	var additionalVersionsResult = input.ConfigValues.Get("istio.additionalVersions").Array()
 	for _, versionResult := range additionalVersionsResult {
-		if !internal.Contains(supportedVersions, versionResult.String()) {
+		if !go_lib_istio.Contains(supportedVersions, versionResult.String()) {
 			unsupportedVersions = append(unsupportedVersions, versionResult.String())
 			continue
 		}
 		versionsToInstall = append(versionsToInstall, versionResult.String())
 	}
 
-	if !internal.Contains(supportedVersions, globalVersion) {
-		if !internal.Contains(unsupportedVersions, globalVersion) {
+	if !go_lib_istio.Contains(supportedVersions, globalVersion) {
+		if !go_lib_istio.Contains(unsupportedVersions, globalVersion) {
 			unsupportedVersions = append(unsupportedVersions, globalVersion)
 		}
 	} else {
-		if !internal.Contains(versionsToInstall, globalVersion) {
+		if !go_lib_istio.Contains(versionsToInstall, globalVersion) {
 			versionsToInstall = append(versionsToInstall, globalVersion)
 		}
 	}

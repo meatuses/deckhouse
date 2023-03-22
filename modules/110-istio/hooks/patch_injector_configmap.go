@@ -10,6 +10,7 @@ package hooks
 import (
 	"fmt"
 
+
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 	"github.com/tidwall/gjson"
@@ -18,13 +19,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
 )
 
 const istioInjectorCPULimitPath = "global.proxy.resources.limits.cpu"
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
-	Queue: internal.Queue("patch-injector-configmap"),
+	Queue: go_lib_istio.Queue("patch-injector-configmap"),
 	Kubernetes: []go_hook.KubernetesConfig{
 		{
 			Name:       "injector_configmap",
@@ -49,7 +50,7 @@ var _ = sdk.RegisterFunc(&go_hook.HookConfig{
 					},
 				},
 			},
-			NamespaceSelector: internal.NsSelector(),
+			NamespaceSelector: go_lib_istio.NsSelector(),
 		},
 	},
 }, patchInjectorConfigmap)

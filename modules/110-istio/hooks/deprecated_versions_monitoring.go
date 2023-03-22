@@ -10,7 +10,7 @@ import (
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook/metrics"
 	"github.com/flant/addon-operator/sdk"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
 )
 
 var (
@@ -18,7 +18,7 @@ var (
 )
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
-	Queue:        internal.Queue(versionsMonitoringMetricsGroup),
+	Queue:        go_lib_istio.Queue(versionsMonitoringMetricsGroup),
 	OnBeforeHelm: &go_hook.OrderedConfig{Order: 10},
 }, versionMonitoringHook)
 

@@ -8,13 +8,15 @@ package hooks
 import (
 	"sort"
 
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 	"github.com/flant/shell-operator/pkg/kube_events_manager/types"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
 )
 
 type IstioNamespaceFilterResult struct {
@@ -54,7 +56,7 @@ func applyDiscoveryAppIstioPodFilter(obj *unstructured.Unstructured) (go_hook.Fi
 }
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
-	Queue: internal.Queue("discovery"),
+	Queue: go_lib_istio.Queue("discovery"),
 	Kubernetes: []go_hook.KubernetesConfig{
 		{
 			Name:          "namespaces_global_revision",
@@ -140,7 +142,7 @@ func applicationNamespacesDiscovery(input *go_hook.HookInput) error {
 		if nsInfo.DeletionTimestampExists {
 			continue
 		}
-		if !internal.Contains(applicationNamespaces, nsInfo.Name) {
+		if !go_lib_istio.Contains(applicationNamespaces, nsInfo.Name) {
 			applicationNamespaces = append(applicationNamespaces, nsInfo.Name)
 		}
 	}

@@ -9,13 +9,15 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+
 	"github.com/Masterminds/semver/v3"
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 
 	"github.com/deckhouse/deckhouse/go_lib/dependency"
 	"github.com/deckhouse/deckhouse/go_lib/hooks/ensure_crds"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
 )
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
@@ -34,7 +36,7 @@ func ensureCRDs(input *go_hook.HookInput, dc dependency.Container) error {
 	istioVersions = append(istioVersions, globalVersion)
 
 	for _, versionResult := range input.ConfigValues.Get("istio.additionalVersions").Array() {
-		if !internal.Contains(istioVersions, versionResult.String()) {
+		if !go_lib_istio.Contains(istioVersions, versionResult.String()) {
 			istioVersions = append(istioVersions, versionResult.String())
 		}
 	}

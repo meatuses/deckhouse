@@ -14,8 +14,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal/istio_versions"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/istio_versions"
 )
 
 const isGlobalVersionIstiodReadyPath = "istio.internal.isGlobalVersionIstiodReady"
@@ -39,7 +39,7 @@ var _ = sdk.RegisterFunc(&go_hook.HookConfig{
 			Name:              "istiod_pods",
 			ApiVersion:        "v1",
 			Kind:              "Pod",
-			NamespaceSelector: internal.NsSelector(),
+			NamespaceSelector: go_lib_istio.NsSelector(),
 			LabelSelector: &metav1.LabelSelector{
 				MatchExpressions: []metav1.LabelSelectorRequirement{
 					{

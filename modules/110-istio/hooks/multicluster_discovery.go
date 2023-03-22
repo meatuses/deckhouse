@@ -10,6 +10,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook/metrics"
 	"github.com/flant/addon-operator/sdk"
@@ -18,8 +20,8 @@ import (
 
 	"github.com/deckhouse/deckhouse/go_lib/dependency"
 	"github.com/deckhouse/deckhouse/go_lib/jwt"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal/crd"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/crd"
 )
 
 var (
@@ -84,7 +86,7 @@ func applyMulticlusterFilter(obj *unstructured.Unstructured) (go_hook.FilterResu
 }
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
-	Queue: internal.Queue("multicluster"),
+	Queue: go_lib_istio.Queue("multicluster"),
 	Kubernetes: []go_hook.KubernetesConfig{
 		{
 			Name:       "multiclusters",
@@ -115,7 +117,7 @@ func multiclusterDiscovery(input *go_hook.HookInput, dc dependency.Container) er
 		var publicMetadata crd.AlliancePublicMetadata
 		var privateMetadata crd.MulticlusterPrivateMetadata
 
-		bodyBytes, statusCode, err := internal.HTTPGet(dc.GetHTTPClient(), multiclusterInfo.PublicMetadataEndpoint, "")
+		bodyBytes, statusCode, err := go_lib_istio.HTTPGet(dc.GetHTTPClient(), multiclusterInfo.PublicMetadataEndpoint, "")
 		if err != nil {
 			input.LogEntry.Warnf("cannot fetch public metadata endpoint %s for IstioMulticluster %s, error: %s", multiclusterInfo.PublicMetadataEndpoint, multiclusterInfo.Name, err.Error())
 			multiclusterInfo.SetMetricMetadataEndpointError(input.MetricsCollector, multiclusterInfo.PublicMetadataEndpoint, 1)
@@ -157,7 +159,7 @@ func multiclusterDiscovery(input *go_hook.HookInput, dc dependency.Container) er
 			multiclusterInfo.SetMetricMetadataEndpointError(input.MetricsCollector, multiclusterInfo.PrivateMetadataEndpoint, 1)
 			continue
 		}
-		bodyBytes, statusCode, err = internal.HTTPGet(dc.GetHTTPClient(), multiclusterInfo.PrivateMetadataEndpoint, bearerToken)
+		bodyBytes, statusCode, err = go_lib_istio.HTTPGet(dc.GetHTTPClient(), multiclusterInfo.PrivateMetadataEndpoint, bearerToken)
 		if err != nil {
 			input.LogEntry.Warnf("cannot fetch private metadata endpoint %s for IstioMulticluster %s, error: %s", multiclusterInfo.PrivateMetadataEndpoint, multiclusterInfo.Name, err.Error())
 			multiclusterInfo.SetMetricMetadataEndpointError(input.MetricsCollector, multiclusterInfo.PrivateMetadataEndpoint, 1)

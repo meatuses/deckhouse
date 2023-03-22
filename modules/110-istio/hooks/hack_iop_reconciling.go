@@ -16,6 +16,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 	"github.com/flant/shell-operator/pkg/kube/object_patch"
@@ -23,8 +25,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal/crd"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/crd"
 )
 
 const validatingErrorStr = `failed calling webhook "validation.istio.io"`
@@ -41,7 +43,7 @@ type IstioOperatorPodSnapshot struct {
 }
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
-	Queue: internal.Queue("iop-reconciling"),
+	Queue: go_lib_istio.Queue("iop-reconciling"),
 	Schedule: []go_hook.ScheduleConfig{
 		{Name: "cron", Crontab: "*/5 * * * *"},
 	},
@@ -50,14 +52,14 @@ var _ = sdk.RegisterFunc(&go_hook.HookConfig{
 			Name:              "istio_operators",
 			ApiVersion:        "install.istio.io/v1alpha1",
 			Kind:              "IstioOperator",
-			NamespaceSelector: internal.NsSelector(),
+			NamespaceSelector: go_lib_istio.NsSelector(),
 			FilterFunc:        applyIopFilter,
 		},
 		{
 			Name:              "istio_operator_pods",
 			ApiVersion:        "v1",
 			Kind:              "Pod",
-			NamespaceSelector: internal.NsSelector(),
+			NamespaceSelector: go_lib_istio.NsSelector(),
 			LabelSelector: &metav1.LabelSelector{
 				MatchExpressions: []metav1.LabelSelectorRequirement{
 					{

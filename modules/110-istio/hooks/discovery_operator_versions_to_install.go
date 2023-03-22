@@ -10,13 +10,15 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal/crd"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal/istio_versions"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/crd"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/istio_versions"
 )
 
 type IstioOperatorCrdInfo struct {
@@ -39,14 +41,14 @@ func applyIstioOperatorFilter(obj *unstructured.Unstructured) (go_hook.FilterRes
 }
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
-	Queue: internal.Queue("discovery"),
+	Queue: go_lib_istio.Queue("discovery"),
 	Kubernetes: []go_hook.KubernetesConfig{
 		{
 			Name:              "istiooperators",
 			ApiVersion:        "install.istio.io/v1alpha1",
 			Kind:              "IstioOperator",
 			FilterFunc:        applyIstioOperatorFilter,
-			NamespaceSelector: internal.NsSelector(),
+			NamespaceSelector: go_lib_istio.NsSelector(),
 		},
 	},
 }, operatorRevisionsToInstallDiscovery)
@@ -69,7 +71,7 @@ func operatorRevisionsToInstallDiscovery(input *go_hook.HookInput) error {
 			unsupportedRevisions = append(unsupportedRevisions, iopInfo.Revision)
 			continue
 		}
-		if !internal.Contains(operatorVersionsToInstall, iopVer) {
+		if !go_lib_istio.Contains(operatorVersionsToInstall, iopVer) {
 			operatorVersionsToInstall = append(operatorVersionsToInstall, iopVer)
 		}
 	}

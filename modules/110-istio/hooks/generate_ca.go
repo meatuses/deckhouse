@@ -8,6 +8,7 @@ package hooks
 import (
 	"fmt"
 
+
 	"github.com/cloudflare/cfssl/csr"
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
@@ -16,7 +17,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
 	"github.com/deckhouse/deckhouse/go_lib/certificate"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
 )
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
@@ -30,7 +31,7 @@ var _ = sdk.RegisterFunc(&go_hook.HookConfig{
 			NameSelector: &types.NameSelector{
 				MatchNames: []string{"cacerts"},
 			},
-			NamespaceSelector: internal.NsSelector(),
+			NamespaceSelector: go_lib_istio.NsSelector(),
 		},
 	},
 }, generateCA)
@@ -42,7 +43,7 @@ func applyIstioCAFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, e
 		return nil, fmt.Errorf("cannot convert selfsigned ca secret to secret: %v", err)
 	}
 
-	return internal.IstioCA{
+	return go_lib_istio.IstioCA{
 		Cert:  string(secret.Data["ca-cert.pem"]),
 		Key:   string(secret.Data["ca-key.pem"]),
 		Chain: string(secret.Data["cert-chain.pem"]),
@@ -51,7 +52,7 @@ func applyIstioCAFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, e
 }
 
 func generateCA(input *go_hook.HookInput) error {
-	var istioCA internal.IstioCA
+	var istioCA go_lib_istio.IstioCA
 
 	if input.Values.Exists("istio.ca.cert") {
 		istioCA.Cert = input.Values.Get("istio.ca.cert").String()
@@ -70,7 +71,7 @@ func generateCA(input *go_hook.HookInput) error {
 		certs := input.Snapshots["secret_ca"]
 		if len(certs) == 1 {
 			var ok bool
-			istioCA, ok = certs[0].(internal.IstioCA)
+			istioCA, ok = certs[0].(go_lib_istio.IstioCA)
 			if !ok {
 				return fmt.Errorf("cannot convert certificate to certificate authority")
 			}

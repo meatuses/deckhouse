@@ -8,10 +8,12 @@ package hooks
 import (
 	"time"
 
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
 	. "github.com/deckhouse/deckhouse/testing/hooks"
 )
 
@@ -79,14 +81,14 @@ type IstioOperatorPodParams struct {
 }
 
 func istioOperatorYaml(iop istioOperatorParams) string {
-	return internal.TemplateToYAML(istioOperatorTemplate, iop)
+	return go_lib_istio.TemplateToYAML(istioOperatorTemplate, iop)
 }
 
 func istioOperatorPodYaml(pod IstioOperatorPodParams) string {
 	if len(pod.TimestampRFC3339) == 0 {
 		pod.TimestampRFC3339 = pod.Timestamp.Format(time.RFC3339)
 	}
-	return internal.TemplateToYAML(podOperatorTemplate, pod)
+	return go_lib_istio.TemplateToYAML(podOperatorTemplate, pod)
 }
 
 var _ = Describe("Istio hooks :: hack iop reconciling ::", func() {

@@ -8,13 +8,15 @@ package hooks
 import (
 	"strings"
 
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+
 	"github.com/flant/shell-operator/pkg/metric_storage/operation"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 	"k8s.io/utils/pointer"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/internal"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
 	. "github.com/deckhouse/deckhouse/testing/hooks"
 )
 
@@ -50,7 +52,7 @@ func generateIstioNsYAML(ns nsParams) string {
 	if ns.Name == "" {
 		ns.Name = nsName
 	}
-	return internal.TemplateToYAML(nsTemplate, ns)
+	return go_lib_istio.TemplateToYAML(nsTemplate, ns)
 }
 
 type deployParams struct {
@@ -95,7 +97,7 @@ func generateIstioDeploymentYAML(deploy deployParams) string {
 	if deploy.Name == "" {
 		deploy.Name = deployName
 	}
-	return internal.TemplateToYAML(deployTemplate, deploy)
+	return go_lib_istio.TemplateToYAML(deployTemplate, deploy)
 }
 
 type stsParams struct {
@@ -142,7 +144,7 @@ func generateIstioStatefulSetYAML(sts stsParams) string {
 	if sts.Name == "" {
 		sts.Name = stsName
 	}
-	return internal.TemplateToYAML(stsTemplate, sts)
+	return go_lib_istio.TemplateToYAML(stsTemplate, sts)
 }
 
 type dsParams struct {
@@ -184,7 +186,7 @@ func generateIstioDaemonSetYAML(ds dsParams) string {
 	if ds.Name == "" {
 		ds.Name = dsName
 	}
-	return internal.TemplateToYAML(dsTemplate, ds)
+	return go_lib_istio.TemplateToYAML(dsTemplate, ds)
 }
 
 type rsParams struct {
@@ -226,7 +228,7 @@ func generateIstioReplicaSetYAML(rs rsParams) string {
 	if rs.Name == "" {
 		rs.Name = rsName
 	}
-	return internal.TemplateToYAML(rsTemplate, rs)
+	return go_lib_istio.TemplateToYAML(rsTemplate, rs)
 }
 
 type podParams struct {
@@ -281,7 +283,7 @@ func generateIstioPodYAML(pod podParams) string {
 	if pod.Name == "" {
 		pod.Name = podName
 	}
-	return internal.TemplateToYAML(podTemplate, pod)
+	return go_lib_istio.TemplateToYAML(podTemplate, pod)
 }
 
 type wantedMetric struct {
