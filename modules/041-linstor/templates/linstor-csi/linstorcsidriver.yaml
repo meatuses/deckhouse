@@ -127,9 +127,6 @@ spec:
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  annotations:
-    helm.sh/hook: post-upgrade, post-install
-    helm.sh/hook-delete-policy: before-hook-creation
   name: linstor-csi-controller
   namespace: d8-{{ .Chart.Name }}
   {{- include "helm_lib_module_labels" (list . (dict "app" "linstor-csi-controller")) | nindent 2 }}
@@ -197,7 +194,7 @@ spec:
     podAntiAffinity: {}
     {{- end }}
   controllerTolerations:
-    {{- index (include "helm_lib_tolerations" (tuple . "system-with-drbd-problems") | fromYaml) "tolerations" | toYaml | nindent 4 }}
+    {{- index (include "helm_lib_tolerations" (tuple . "system") | fromYaml) "tolerations" | toYaml | nindent 4 }}
   enableTopology: true
   resources:
     requests:

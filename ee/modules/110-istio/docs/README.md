@@ -1,10 +1,12 @@
 ---
 title: "The istio module"
+webIfaces:
+- name: istio
 ---
 
 Currently supported istio versions:
-* 1.12 (will be deprecated soon)
-* 1.13 (will be deprecated soon)
+* 1.12 (deprecated)
+* 1.13 (deprecated)
 * 1.16
 
 ## What issues does Istio help to resolve?

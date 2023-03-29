@@ -82,6 +82,8 @@ You can automate the bootstrap process with any automation platform you prefer. 
          when: bootstrapped.stat.exists == False
        - name: Run bootstrap.sh
          shell: "{{ bootstrap_secret.json.data['bootstrap.sh'] | b64decode }}"
+         args:
+           executable: /bin/bash
          ignore_errors: yes
          when: bootstrapped.stat.exists == False
        - name: wait
@@ -533,7 +535,7 @@ Also, this operation can be done with patch:
   kubectl patch nodegroup <NodeGroup name> --type merge -p '{"spec":{"cri":{"type":"Docker"}}}'
   ```
 
-> **Note!** You cannot set `cri.type` for NodeGroups, created using `dhctl` (e.g. the `master` NodeGroup).
+> **Note!** While changing `cri.type` for NodeGroups, created using `dhctl`, you must change it in `dhctl config edit provider-cluster-configuration` and in `NodeGroup` object.
 
 After setting up a new CRI for NodeGroup, the node-manager module drains nodes one by one and installs a new CRI on them. Node update
 is accompanied by downtime (disruption). Depending on the `disruption` setting for NodeGroup, the node-manager module either automatically allows

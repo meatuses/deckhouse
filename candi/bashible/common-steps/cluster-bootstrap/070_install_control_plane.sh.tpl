@@ -12,17 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-{{- $experimentalOption := "" -}}
-{{- if semverCompare "<1.22" .kubernetesVersion -}}
-  {{- $experimentalOption = "--experimental-patches /var/lib/bashible/kubeadm/patches" -}}
-{{- end }}
-
 mkdir -p /etc/kubernetes/deckhouse/kubeadm/patches/
 cp /var/lib/bashible/kubeadm/patches/* /etc/kubernetes/deckhouse/kubeadm/patches/
 kubeadm init phase certs all --config /var/lib/bashible/kubeadm/config.yaml
 kubeadm init phase kubeconfig all --config /var/lib/bashible/kubeadm/config.yaml
-kubeadm init phase etcd local --config /var/lib/bashible/kubeadm/config.yaml {{ $experimentalOption }}
-kubeadm init phase control-plane all --config /var/lib/bashible/kubeadm/config.yaml {{ $experimentalOption }}
+kubeadm init phase etcd local --config /var/lib/bashible/kubeadm/config.yaml
+kubeadm init phase control-plane all --config /var/lib/bashible/kubeadm/config.yaml
 kubeadm init phase mark-control-plane --config /var/lib/bashible/kubeadm/config.yaml
 # This phase add 'node.kubernetes.io/exclude-from-external-load-balancers' label to node
 # with this label we cannot use target load balancers to control-plane nodes, so we manually remove them
@@ -48,3 +43,21 @@ if [ ! -f /root/.kube/config ]; then
   mkdir -p /root/.kube
   ln -s /etc/kubernetes/admin.conf /root/.kube/config
 fi
+
+{{- if semverCompare "<1.24" .kubernetesVersion }}
+# add node-role.kubernetes.io/control-plane taint
+# kubeadm < 1.24 taint node only with add node-role.kubernetes.io/master taint
+if ! bb-kubectl --kubeconfig=/etc/kubernetes/admin.conf taint node "$(hostname)" node-role.kubernetes.io/control-plane=:NoSchedule; then
+  echo "Cannot add 'node-role.kubernetes.io/control-plane' taint to node" 1>&2
+  exit 1
+fi
+{{- end }}
+
+{{- if semverCompare "<1.25" .kubernetesVersion }}
+# remove node-role.kubernetes.io/master taint because we start use node-role.kubernetes.io/control-plane
+# and node-role.kubernetes.io/master keeps only first master node
+if ! bb-kubectl --kubeconfig=/etc/kubernetes/admin.conf taint node "$(hostname)" node-role.kubernetes.io/master-; then
+  echo "Cannot remove 'node-role.kubernetes.io/master' taint from node" 1>&2
+  exit 1
+fi
+{{- end }}

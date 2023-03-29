@@ -45,6 +45,11 @@
       "healthcheck": {
         "enabled": false
       },
+      "buffer": {
+        "max_size": 268435488,
+        "type": "disk",
+        "when_full": "block"
+      },
       "encoding": {
         "only_fields": [
           "message"

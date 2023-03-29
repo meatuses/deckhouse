@@ -174,7 +174,7 @@ spec:
       - name: deckhouse-registry
       {{- include "helm_lib_priority_class" (tuple $context "system-cluster-critical") | nindent 6 }}
       {{- include "helm_lib_node_selector" (tuple $context "master") | nindent 6 }}
-      {{- include "helm_lib_tolerations" (tuple $context "master") | nindent 6 }}
+      {{- include "helm_lib_tolerations" (tuple $context "any-node" "with-uninitialized") | nindent 6 }}
       {{- include "helm_lib_module_pod_security_context_run_as_user_nobody" . | nindent 6 }}
       serviceAccountName: csi
       containers:
@@ -194,10 +194,8 @@ spec:
         - "--default-fstype=ext4"
         - "--leader-election=true"
         - "--leader-election-namespace=$(NAMESPACE)"
-  {{- if semverCompare ">= 1.21" $context.Values.global.discovery.kubernetesVersion }}
         - "--enable-capacity"
         - "--capacity-ownerref-level=2"
-  {{- end }}
         - "--worker-threads={{ $provisionerWorkers }}"
         env:
         - name: ADDRESS

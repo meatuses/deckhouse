@@ -45,6 +45,11 @@
       "healthcheck": {
         "enabled": false
       },
+      "buffer": {
+        "max_size": 268435488,
+        "type": "disk",
+        "when_full": "block"
+      },
       "address": "192.168.0.1:9000",
       "encoding": {
         "codec": "json",

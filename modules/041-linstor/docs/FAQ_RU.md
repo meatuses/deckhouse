@@ -49,6 +49,25 @@ title: "Модуль linstor: FAQ"
 - DRBD + LVM — быстрей (в два раза) и надежней (LVM — проще);
 - DRBD + LVMThin — поддержка snapshot'ов и возможность overprovisioning.
 
+## Как получить информацию об используемом пространстве?
+
+Есть два варианта:
+
+- Через дашборд Grafana: перейдите **Dashboards --> Storage --> LINSTOR/DRBD**  
+  В правом верхнем углу вы найдёте информацию об используемом пространстве в кластере.
+
+  > **Внимание!** Эта информация отражает состояние всего *сырого* пространства в кластере.
+  > То есть если вы создаёте тома в двух репликах, то эти значения стоит поделить на два. Это нужно, чтобы получить примерное представление того, сколько таких томов может быть размещено в вашем кластере.
+
+- Через командный интерфейс LINSTOR:
+
+  ```shell
+  kubectl exec -n d8-linstor deploy/linstor-controller -- linstor storage-pool list
+  ```
+
+  > **Внимание!** Эта информация отражает состояние *сырого* пространства для каждого узла в кластере.
+  > То есть если вы создаёте тома в двух репликах, то эти две реплики обязательно должны целиком поместиться на двух узлах вашего кластера.
+
 ## Как назначить StorageClass по умолчанию
 
 Отобразите список всех StorageClass'ов:
@@ -137,8 +156,7 @@ linstor node evacuate <имя_узла>
 Проверьте состояние Pod'ов `linstor-node`:
 
 ```shell
-kubectl get pod -n d8-linstor -l app.kubernetes.io/instance=linstor,\
-app.kubernetes.io/managed-by=piraeus-operator,app.kubernetes.io/name=piraeus-node
+kubectl get pod -n d8-linstor -l app=linstor-node
 ```
 
 Если вы видите что некоторые из них находятся в состоянии `Init:CrashLoopBackOff`, проверьте логи контейнера `kernel-module-injector`:
@@ -189,8 +207,7 @@ contain driver linstor.csi.linbit.com
 Проверьте состояние Pod'ов `linstor-csi-node`:
 
 ```shell
-kubectl get pod -n d8-linstor -l app.kubernetes.io/component=csi-node,app.kubernetes.io/instance=linstor,\
-app.kubernetes.io/managed-by=piraeus-operator,app.kubernetes.io/name=piraeus-csi
+kubectl get pod -n d8-linstor -l app.kubernetes.io/component=csi-node
 ```
 
 Наиболее вероятно, что они зависли в состоянии `Init`, ожидая пока узел сменит статус на `Online` в LINSTOR. Проверьте список узлов с помощью следующей команды:

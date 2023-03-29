@@ -368,7 +368,7 @@ docker:
 ---
 artifact: deckhouse-controller
 fromImage: base-for-go
-fromCacheVersion: "20210413"
+fromCacheVersion: "20230202"
 git:
 - add: /
   to: /deckhouse
@@ -494,6 +494,7 @@ ansible:
 ---
 image: dev/install
 from: {{ .Images.BASE_ALPINE }}
+fromCacheVersion: "20230315"
 git:
 - add: /
   to: /deckhouse

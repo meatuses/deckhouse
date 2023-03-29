@@ -193,6 +193,11 @@
       "healthcheck": {
         "enabled": false
       },
+      "buffer": {
+        "max_size": 270532608,
+        "type": "disk",
+        "when_full": "block"
+      },
       "endpoint": "http://192.168.1.1:9200",
       "encoding": {
         "timestamp_format": "rfc3339"
@@ -229,6 +234,11 @@
       "healthcheck": {
         "enabled": false
       },
+      "buffer": {
+        "max_size": 536870912,
+        "type": "disk",
+        "when_full": "drop_newest"
+      },
       "address": "192.168.199.252:9009",
       "encoding": {
         "codec": "json",
@@ -254,6 +264,11 @@
       ],
       "healthcheck": {
         "enabled": false
+      },
+      "buffer": {
+        "type": "memory",
+        "max_events": 4096,
+        "when_full": "drop_newest"
       },
       "encoding": {
         "only_fields": [

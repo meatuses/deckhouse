@@ -46,6 +46,9 @@ data:
   tunnel-port: "8469"
   enable-ip-masq-agent: "true"
   ip-masq-agent-config-path: /etc/config/ip-masq-agent
+  # Use stable MAC addresses for pods
+  endpoint-interface-host-mac: "f6:e1:74:94:b8:1b"
+  endpoint-interface-mac: "f6:e1:74:94:b8:1a"
   {{- end }}
 
   {{- if eq .Values.cniCilium.internal.masqueradeMode "BPF" }}
@@ -72,7 +75,7 @@ data:
   kube-proxy-replacement: "strict"
   kube-proxy-replacement-healthz-bind-address: "0.0.0.0:10256"
 
-  enable-host-reachable-services: "true"
+  bpf-lb-sock: "true"
   bpf-lb-sock-hostns-only: "true"
   enable-health-check-nodeport: "true"
   node-port-bind-protection: "true"

@@ -27,4 +27,5 @@ until apt install jq netcat-openbsd curl -y; do
   apt update
   sleep 10
 done
+
 mkdir -p /var/lib/bashible/

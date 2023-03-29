@@ -519,6 +519,81 @@ spec:
                       type: number
                       description: |
                         The number of records per minute.
+                    keyField:
+                      type: string
+                      description: The name of the log field whose value will be hashed to determine if the event should be rate limited.
+                    excludes:
+                      type: array
+                      description: |
+                        List of excludes for keyField.
+
+                        Only NOT matched log entries would be rate limited.
+                      example: |
+                        ```yaml
+                        excludes:
+                        - field: tier
+                          operator: Exists
+                        - field: foo
+                          operator: NotIn
+                          values:
+                          - dev
+                          - 42
+                          - "true"
+                          - "3.14"
+                        - field: bar
+                          operator: Regex
+                          values:
+                          - ^abc
+                          - ^\d.+$
+                        ```
+                      items:
+                        type: object
+                        required:
+                          - field
+                          - operator
+                        properties:
+                          field:
+                            description: Field name for filtering.
+                            type: string
+                          operator:
+                            type: string
+                            description: |
+                              Operator for log field comparations:
+                              * `In` — finds a substring in a string.
+                              * `NotIn` — is a negative version of the `In` operator.
+                              * `Regex` — is trying to match regexp over the field; only log events with matching fields will pass.
+                              * `NotRegex` — is a negative version of the `Regex` operator; log events without fields or with not matched fields will pass.
+                              * `Exists` — drops log event if it contains some fields.
+                              * `DoesNotExist` — drops log event if it does not contain some fields.
+                            enum:
+                              - In
+                              - NotIn
+                              - Regex
+                              - NotRegex
+                              - Exists
+                              - DoesNotExist
+                          values:
+                            type: array
+                            description: |
+                              Array of values or regexes for corresponding operations. Does not work for `Exists` and `DoesNotExist` operations.
+
+                              Fields a with float or boolean values will be converted to strings during comparison.
+                            items:
+                              x-kubernetes-int-or-string: true
+                              anyOf:
+                                - type: integer
+                                - type: string
+                        oneOf:
+                          - properties:
+                              operator:
+                                enum: ["Exists", "DoesNotExist"]
+                              values:
+                                maxItems: 0
+                          - properties:
+                              operator:
+                                enum: ["Regex", "NotRegex", "In", "NotIn"]
+                              values:
+                                minItems: 1
                 extraLabels:
                   type: object
                   description: |
@@ -552,3 +627,56 @@ spec:
                     anyOf:
                       - pattern: '^[a-zA-Z0-9_\-]+$'
                       - pattern: '^\{\{\ [a-zA-Z0-9\\\-][a-zA-Z0-9\[\]_\\\-\.]+\ \}\}$'
+                buffer:
+                  type: object
+                  oneOF:
+                    - properties:
+                        disk: {}
+                        type:
+                          enum:
+                            - Disk
+                      required:
+                        - disk
+                        - type
+                        - whenFull
+                    - properties:
+                        memory: {}
+                        type:
+                          enum:
+                            - Memory
+                      required:
+                        - memory
+                        - type
+                        - whenFull
+                  properities:
+                    type:
+                      type: string
+                      description: The type of buffer to use.
+                      enum: ["Disk", "Memory"]
+                    disk:
+                      type: object
+                      properities:
+                        maxSize:
+                          description: |
+                            The maximum size of the buffer on disk.
+                            Must be at least ~256 megabytes (268435488 bytes).
+
+                            You can express size as a plain integer or as a fixed-point number using one of these quantity suffixes: E, P, T, G, M, k, Ei, Pi, Ti, Gi, Mi, Ki.
+                            More about resource quantity: [kubernetes quantity](https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/quantity/), [memory resource units](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory)
+                          x-doc-examples: ["512Mi", 268435488]
+                          anyOf:
+                            - type: integer
+                            - type: string
+                          pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                          x-kubernetes-int-or-string: true
+                    memory:
+                      type: object
+                      properities:
+                        maxEvents:
+                          description: The maximum number of events allowed in the buffer.
+                          type: number
+                    whenFull:
+                      type: string
+                      description: Event handling behavior when a buffer is full.
+                      enum: ["DropNewest", "Block"]
+                      default: "Block"
