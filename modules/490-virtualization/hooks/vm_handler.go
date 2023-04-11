@@ -588,7 +588,8 @@ func processKubevirtVM(input *go_hook.HookInput, d8vm *v1alpha1.VirtualMachine, 
 			}
 			err = setVMFields(d8vm, vm, ipAddress)
 			if err != nil {
-				return nil, err
+				input.LogEntry.Errorln(err)
+				return u
 			}
 			return sdk.ToUnstructured(&vm)
 		}
