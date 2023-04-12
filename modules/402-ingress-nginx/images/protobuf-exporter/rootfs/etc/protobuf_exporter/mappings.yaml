@@ -122,4 +122,5 @@
 #22
 - name: ingress_nginx_default_backend_requests_total
   type: Counter
+  labels: [ingress, service, location]
   ttl: 1h

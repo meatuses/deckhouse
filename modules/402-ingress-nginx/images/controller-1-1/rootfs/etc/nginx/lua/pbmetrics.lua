@@ -211,8 +211,12 @@ local function fill_buffer()
   -- For older versions we just cut of the asterisk from vhost
   local var_server_name = ngx.var.server_name:gsub("^*", ""):gsub("~^%(%?<subdomain>%[\\w%-]%+%)", ""):gsub("$$", ""):gsub("\\", "")
 
+  local var_ingress_name = ngx.var.ingress_name == "" and "-" or ngx.var.ingress_name
+  local var_service_name = ngx.var.service_name == "" and "-" or ngx.var.service_name
+  local var_location_path = ngx.var.location_path == "" and "-" or ngx.var.location_path
+
   if var_server_name == "_" then
-    _increment("c22", {}, 22)
+    _increment("c22#" .. var_ingress_name .. "#" .. var_service_name .. "#" .. var_location_path, {}, 22)
     return
   end
 
@@ -268,10 +272,7 @@ local function fill_buffer()
   ngx.var.content_kind = content_kind
 
   local var_namespace = ngx.var.namespace == "" and "-" or ngx.var.namespace
-  local var_ingress_name = ngx.var.ingress_name == "" and "-" or ngx.var.ingress_name
-  local var_service_name = ngx.var.service_name == "" and "-" or ngx.var.service_name
   local var_service_port = ngx.var.service_port == "" and "-" or ngx.var.service_port
-  local var_location_path = ngx.var.location_path == "" and "-" or ngx.var.location_path
   local var_annotations = { namespace = var_namespace, ingress = var_ingress_name }
 
   local overall_key = content_kind .. "#" .. var_namespace .. "#" .. var_server_name
