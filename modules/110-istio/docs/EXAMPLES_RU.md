@@ -563,6 +563,8 @@ spec:
 
 ## Устройство федерации из двух кластеров с помощью CR IstioFederation
 
+> Доступно только в редакции Enterprise Edition.
+
 Cluster A:
 
 ```yaml
@@ -588,6 +590,8 @@ spec:
 ```
 
 ## Устройство мультикластера из двух кластеров с помощью ресурса IstioMulticluster
+
+> Доступно только в редакции Enterprise Edition.
 
 Cluster A:
 
@@ -648,5 +652,7 @@ kubectl get pods -A -o json | jq --arg revision "v1x13" \
 ```
 
 ### Автоматическое обновление data-plane Istio
+
+> Доступно только в редакции Enterprise Edition.
 
 Для автоматизации обновления istio-sidecar'ов установите лейбл `istio.deckhouse.io/auto-upgrade="true"` на `Namespace` либо на отдельный ресурс, `Deployment`, `DaemonSet` или `StatefulSet`.

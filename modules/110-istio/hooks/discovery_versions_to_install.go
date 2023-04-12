@@ -1,6 +1,17 @@
 /*
-Copyright 2022 Flant JSC
-Licensed under the Deckhouse Platform Enterprise Edition (EE) license. See https://github.com/deckhouse/deckhouse/blob/main/ee/LICENSE
+Copyright 2023 Flant JSC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 
 package hooks
@@ -11,16 +22,14 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
-
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/deckhouse/deckhouse/go_lib/dependency"
 	"github.com/deckhouse/deckhouse/go_lib/telemetry"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/istio_versions"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib/istio_versions"
 )
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
@@ -72,19 +81,19 @@ func revisionsDiscovery(input *go_hook.HookInput, dc dependency.Container) error
 
 	var additionalVersionsResult = input.ConfigValues.Get("istio.additionalVersions").Array()
 	for _, versionResult := range additionalVersionsResult {
-		if !go_lib_istio.Contains(supportedVersions, versionResult.String()) {
+		if !lib.Contains(supportedVersions, versionResult.String()) {
 			unsupportedVersions = append(unsupportedVersions, versionResult.String())
 			continue
 		}
 		versionsToInstall = append(versionsToInstall, versionResult.String())
 	}
 
-	if !go_lib_istio.Contains(supportedVersions, globalVersion) {
-		if !go_lib_istio.Contains(unsupportedVersions, globalVersion) {
+	if !lib.Contains(supportedVersions, globalVersion) {
+		if !lib.Contains(unsupportedVersions, globalVersion) {
 			unsupportedVersions = append(unsupportedVersions, globalVersion)
 		}
 	} else {
-		if !go_lib_istio.Contains(versionsToInstall, globalVersion) {
+		if !lib.Contains(versionsToInstall, globalVersion) {
 			versionsToInstall = append(versionsToInstall, globalVersion)
 		}
 	}

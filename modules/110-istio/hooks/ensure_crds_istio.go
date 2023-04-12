@@ -1,6 +1,17 @@
 /*
-Copyright 2022 Flant JSC
-Licensed under the Deckhouse Platform Enterprise Edition (EE) license. See https://github.com/deckhouse/deckhouse/blob/main/ee/LICENSE
+Copyright 2023 Flant JSC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 
 package hooks
@@ -9,15 +20,13 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
-
 	"github.com/Masterminds/semver/v3"
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 
 	"github.com/deckhouse/deckhouse/go_lib/dependency"
 	"github.com/deckhouse/deckhouse/go_lib/hooks/ensure_crds"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib"
 )
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
@@ -36,7 +45,7 @@ func ensureCRDs(input *go_hook.HookInput, dc dependency.Container) error {
 	istioVersions = append(istioVersions, globalVersion)
 
 	for _, versionResult := range input.ConfigValues.Get("istio.additionalVersions").Array() {
-		if !go_lib_istio.Contains(istioVersions, versionResult.String()) {
+		if !lib.Contains(istioVersions, versionResult.String()) {
 			istioVersions = append(istioVersions, versionResult.String())
 		}
 	}

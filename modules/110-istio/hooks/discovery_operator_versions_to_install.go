@@ -1,6 +1,17 @@
 /*
-Copyright 2022 Flant JSC
-Licensed under the Deckhouse Platform Enterprise Edition (EE) license. See https://github.com/deckhouse/deckhouse/blob/main/ee/LICENSE
+Copyright 2023 Flant JSC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 
 package hooks
@@ -10,15 +21,13 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
-
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/crd"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/istio_versions"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib/crd"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib/istio_versions"
 )
 
 type IstioOperatorCrdInfo struct {
@@ -41,14 +50,14 @@ func applyIstioOperatorFilter(obj *unstructured.Unstructured) (go_hook.FilterRes
 }
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
-	Queue: go_lib_istio.Queue("discovery"),
+	Queue: lib.Queue("discovery"),
 	Kubernetes: []go_hook.KubernetesConfig{
 		{
 			Name:              "istiooperators",
 			ApiVersion:        "install.istio.io/v1alpha1",
 			Kind:              "IstioOperator",
 			FilterFunc:        applyIstioOperatorFilter,
-			NamespaceSelector: go_lib_istio.NsSelector(),
+			NamespaceSelector: lib.NsSelector(),
 		},
 	},
 }, operatorRevisionsToInstallDiscovery)
@@ -71,7 +80,7 @@ func operatorRevisionsToInstallDiscovery(input *go_hook.HookInput) error {
 			unsupportedRevisions = append(unsupportedRevisions, iopInfo.Revision)
 			continue
 		}
-		if !go_lib_istio.Contains(operatorVersionsToInstall, iopVer) {
+		if !lib.Contains(operatorVersionsToInstall, iopVer) {
 			operatorVersionsToInstall = append(operatorVersionsToInstall, iopVer)
 		}
 	}

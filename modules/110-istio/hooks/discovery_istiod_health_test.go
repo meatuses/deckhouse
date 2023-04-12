@@ -1,6 +1,17 @@
 /*
-Copyright 2022 Flant JSC
-Licensed under the Deckhouse Platform Enterprise Edition (EE) license. See https://github.com/deckhouse/deckhouse/blob/main/ee/LICENSE
+Copyright 2023 Flant JSC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 
 package hooks
@@ -9,7 +20,7 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib"
 	. "github.com/deckhouse/deckhouse/testing/hooks"
 )
 
@@ -54,7 +65,7 @@ type PodIstiodTemplateParams struct {
 }
 
 func podIstiodYaml(podParams PodIstiodTemplateParams) string {
-	return go_lib_istio.TemplateToYAML(podIstiodTemplate, podParams)
+	return lib.TemplateToYAML(podIstiodTemplate, podParams)
 }
 
 var _ = Describe("Istio hooks :: discovery istiod health ::", func() {

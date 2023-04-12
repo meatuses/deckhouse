@@ -193,6 +193,8 @@ It is also important to get the Ingress controller and the application's Ingress
 
 ## Federation and multicluster
 
+> Available in Enterprise Edition only.
+
 Deckhouse supports two schemes of inter-cluster interaction:
 
 * [federation](#federation)

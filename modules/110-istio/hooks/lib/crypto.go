@@ -14,16 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package hooks
+package lib
 
-import (
-	"testing"
+type IstioCA struct {
+	Key   string `json:"key"`
+	Cert  string `json:"cert"`
+	Chain string `json:"chain"`
+	Root  string `json:"root"`
+}
 
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-)
-
-func Test(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "")
+type Keypair struct {
+	Pub  string `json:"pub"`
+	Priv string `json:"priv"`
 }

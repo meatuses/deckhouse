@@ -3,7 +3,7 @@ Copyright 2021 Flant JSC
 Licensed under the Deckhouse Platform Enterprise Edition (EE) license. See https://github.com/deckhouse/deckhouse/blob/main/ee/LICENSE
 */
 
-package hooks
+package ee
 
 import (
 	"encoding/json"
@@ -11,18 +11,16 @@ import (
 	"strings"
 	"time"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
-
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook/metrics"
 	"github.com/flant/addon-operator/sdk"
 	"github.com/flant/shell-operator/pkg/kube/object_patch"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
+	eeCrd "github.com/deckhouse/deckhouse/ee/modules/110-istio/hooks/ee/lib/crd"
 	"github.com/deckhouse/deckhouse/go_lib/dependency"
 	"github.com/deckhouse/deckhouse/go_lib/jwt"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/crd"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib"
 )
 
 var (
@@ -87,7 +85,7 @@ func (i *ipIterator) Next() (string, error) {
 }
 
 func applyFederationFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, error) {
-	var federation crd.IstioFederation
+	var federation eeCrd.IstioFederation
 
 	err := sdk.FromUnstructured(obj, &federation)
 	if err != nil {
@@ -121,7 +119,7 @@ func applyFederationFilter(obj *unstructured.Unstructured) (go_hook.FilterResult
 }
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
-	Queue: go_lib_istio.Queue("federation"),
+	Queue: lib.Queue("federation"),
 	Kubernetes: []go_hook.KubernetesConfig{
 		{
 			Name:       "federations",
@@ -170,10 +168,10 @@ func federationDiscovery(input *go_hook.HookInput, dc dependency.Container) erro
 			continue
 		}
 
-		var publicMetadata crd.AlliancePublicMetadata
-		var privateMetadata crd.FederationPrivateMetadata
+		var publicMetadata eeCrd.AlliancePublicMetadata
+		var privateMetadata eeCrd.FederationPrivateMetadata
 
-		bodyBytes, statusCode, err := go_lib_istio.HTTPGet(dc.GetHTTPClient(), federationInfo.PublicMetadataEndpoint, "")
+		bodyBytes, statusCode, err := lib.HTTPGet(dc.GetHTTPClient(), federationInfo.PublicMetadataEndpoint, "")
 		if err != nil {
 			input.LogEntry.Warnf("cannot fetch public metadata endpoint %s for IstioFederation %s, error: %s", federationInfo.PublicMetadataEndpoint, federationInfo.Name, err.Error())
 			federationInfo.SetMetricMetadataEndpointError(input.MetricsCollector, federationInfo.PublicMetadataEndpoint, 1)
@@ -215,7 +213,7 @@ func federationDiscovery(input *go_hook.HookInput, dc dependency.Container) erro
 			federationInfo.SetMetricMetadataEndpointError(input.MetricsCollector, federationInfo.PrivateMetadataEndpoint, 1)
 			continue
 		}
-		bodyBytes, statusCode, err = go_lib_istio.HTTPGet(dc.GetHTTPClient(), federationInfo.PrivateMetadataEndpoint, bearerToken)
+		bodyBytes, statusCode, err = lib.HTTPGet(dc.GetHTTPClient(), federationInfo.PrivateMetadataEndpoint, bearerToken)
 		if err != nil {
 			input.LogEntry.Warnf("cannot fetch private metadata endpoint %s for IstioFederation %s, error: %s", federationInfo.PrivateMetadataEndpoint, federationInfo.Name, err.Error())
 			federationInfo.SetMetricMetadataEndpointError(input.MetricsCollector, federationInfo.PrivateMetadataEndpoint, 1)

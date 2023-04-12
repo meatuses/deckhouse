@@ -2,7 +2,6 @@
 Copyright 2021 Flant JSC
 Licensed under the Deckhouse Platform Enterprise Edition (EE) license. See https://github.com/deckhouse/deckhouse/blob/main/ee/LICENSE
 */
-
 package crd
 
 import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"

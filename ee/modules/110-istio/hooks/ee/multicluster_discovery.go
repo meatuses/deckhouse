@@ -1,16 +1,14 @@
 /*
-Copyright 2021 Flant JSC
+Copyright 2022 Flant JSC
 Licensed under the Deckhouse Platform Enterprise Edition (EE) license. See https://github.com/deckhouse/deckhouse/blob/main/ee/LICENSE
 */
 
-package hooks
+package ee
 
 import (
 	"encoding/json"
 	"strings"
 	"time"
-
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
 
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook/metrics"
@@ -18,10 +16,10 @@ import (
 	"github.com/flant/shell-operator/pkg/kube/object_patch"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
+	eeCrd "github.com/deckhouse/deckhouse/ee/modules/110-istio/hooks/ee/lib/crd"
 	"github.com/deckhouse/deckhouse/go_lib/dependency"
 	"github.com/deckhouse/deckhouse/go_lib/jwt"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/crd"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib"
 )
 
 var (
@@ -61,7 +59,7 @@ func (i *IstioMulticlusterDiscoveryCrdInfo) PatchMetadataCache(pc *object_patch.
 }
 
 func applyMulticlusterFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, error) {
-	var multicluster crd.IstioMulticluster
+	var multicluster eeCrd.IstioMulticluster
 
 	err := sdk.FromUnstructured(obj, &multicluster)
 	if err != nil {
@@ -86,7 +84,7 @@ func applyMulticlusterFilter(obj *unstructured.Unstructured) (go_hook.FilterResu
 }
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
-	Queue: go_lib_istio.Queue("multicluster"),
+	Queue: lib.Queue("multicluster"),
 	Kubernetes: []go_hook.KubernetesConfig{
 		{
 			Name:       "multiclusters",
@@ -114,10 +112,10 @@ func multiclusterDiscovery(input *go_hook.HookInput, dc dependency.Container) er
 	for _, multicluster := range input.Snapshots["multiclusters"] {
 		multiclusterInfo := multicluster.(IstioMulticlusterDiscoveryCrdInfo)
 
-		var publicMetadata crd.AlliancePublicMetadata
-		var privateMetadata crd.MulticlusterPrivateMetadata
+		var publicMetadata eeCrd.AlliancePublicMetadata
+		var privateMetadata eeCrd.MulticlusterPrivateMetadata
 
-		bodyBytes, statusCode, err := go_lib_istio.HTTPGet(dc.GetHTTPClient(), multiclusterInfo.PublicMetadataEndpoint, "")
+		bodyBytes, statusCode, err := lib.HTTPGet(dc.GetHTTPClient(), multiclusterInfo.PublicMetadataEndpoint, "")
 		if err != nil {
 			input.LogEntry.Warnf("cannot fetch public metadata endpoint %s for IstioMulticluster %s, error: %s", multiclusterInfo.PublicMetadataEndpoint, multiclusterInfo.Name, err.Error())
 			multiclusterInfo.SetMetricMetadataEndpointError(input.MetricsCollector, multiclusterInfo.PublicMetadataEndpoint, 1)
@@ -159,7 +157,7 @@ func multiclusterDiscovery(input *go_hook.HookInput, dc dependency.Container) er
 			multiclusterInfo.SetMetricMetadataEndpointError(input.MetricsCollector, multiclusterInfo.PrivateMetadataEndpoint, 1)
 			continue
 		}
-		bodyBytes, statusCode, err = go_lib_istio.HTTPGet(dc.GetHTTPClient(), multiclusterInfo.PrivateMetadataEndpoint, bearerToken)
+		bodyBytes, statusCode, err = lib.HTTPGet(dc.GetHTTPClient(), multiclusterInfo.PrivateMetadataEndpoint, bearerToken)
 		if err != nil {
 			input.LogEntry.Warnf("cannot fetch private metadata endpoint %s for IstioMulticluster %s, error: %s", multiclusterInfo.PrivateMetadataEndpoint, multiclusterInfo.Name, err.Error())
 			multiclusterInfo.SetMetricMetadataEndpointError(input.MetricsCollector, multiclusterInfo.PrivateMetadataEndpoint, 1)

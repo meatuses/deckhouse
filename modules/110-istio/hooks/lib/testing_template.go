@@ -14,16 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package hooks
+package lib
 
 import (
-	"testing"
-
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
+	"bytes"
+	"text/template"
 )
 
-func Test(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "")
+func TemplateToYAML(tmpl string, params interface{}) string {
+	var output bytes.Buffer
+	t := template.Must(template.New("").Parse(tmpl))
+	_ = t.Execute(&output, params)
+	return output.String()
 }

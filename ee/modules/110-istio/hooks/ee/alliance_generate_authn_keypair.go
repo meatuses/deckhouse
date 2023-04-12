@@ -3,7 +3,7 @@ Copyright 2021 Flant JSC
 Licensed under the Deckhouse Platform Enterprise Edition (EE) license. See https://github.com/deckhouse/deckhouse/blob/main/ee/LICENSE
 */
 
-package hooks
+package ee
 
 import (
 	"crypto/ed25519"
@@ -12,14 +12,13 @@ import (
 	"encoding/pem"
 	"fmt"
 
-
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 	"github.com/flant/shell-operator/pkg/kube_events_manager/types"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib"
 )
 
 func applyKeypairFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, error) {
@@ -29,7 +28,7 @@ func applyKeypairFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, e
 		return nil, fmt.Errorf("cannot convert k8s secret to struct: %v", err)
 	}
 
-	return go_lib_istio.Keypair{
+	return lib.Keypair{
 		Pub:  string(secret.Data["pub.pem"]),
 		Priv: string(secret.Data["priv.pem"]),
 	}, nil
@@ -46,18 +45,18 @@ var _ = sdk.RegisterFunc(&go_hook.HookConfig{
 			NameSelector: &types.NameSelector{
 				MatchNames: []string{"d8-remote-authn-keypair"},
 			},
-			NamespaceSelector: go_lib_istio.NsSelector(),
+			NamespaceSelector: lib.NsSelector(),
 		},
 	},
 }, generateKeypair)
 
 func generateKeypair(input *go_hook.HookInput) error {
-	var keypair go_lib_istio.Keypair
+	var keypair lib.Keypair
 
 	secrets := input.Snapshots["secret"]
 	if len(secrets) == 1 {
 		var ok bool
-		keypair, ok = secrets[0].(go_lib_istio.Keypair)
+		keypair, ok = secrets[0].(lib.Keypair)
 		if !ok {
 			return fmt.Errorf("cannot convert keypair in secret to struct")
 		}
@@ -87,7 +86,7 @@ func generateKeypair(input *go_hook.HookInput) error {
 		}
 		pubPEM := pem.EncodeToMemory(pubBlock)
 
-		keypair = go_lib_istio.Keypair{
+		keypair = lib.Keypair{
 			Pub:  string(pubPEM),
 			Priv: string(privPEM),
 		}

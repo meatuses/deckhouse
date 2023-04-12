@@ -562,6 +562,8 @@ spec:
 
 ## Setting up federation for two clusters using the IstioFederation CR
 
+> Available in Enterprise Edition only.
+
 Cluster A:
 
 ```yaml
@@ -587,6 +589,8 @@ spec:
 ```
 
 ## Setting up multicluster for two clusters using the IstioMulticluster CR
+
+> Available in Enterprise Edition only.
 
 Cluster A:
 
@@ -646,5 +650,7 @@ kubectl get pods -A -o json | jq --arg revision "v1x13" \
 ```
 
 ### Auto upgrading istio data-plane
+
+> Available in Enterprise Edition only.
 
 To automate istio-sidecar upgrading, set a label `istio.deckhouse.io/auto-upgrade="true"` on the application `Namespace` or on the individual resources — `Deployment`, `DaemonSet` or `StatefulSet`.

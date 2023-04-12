@@ -1,13 +1,23 @@
 /*
-Copyright 2021 Flant JSC
-Licensed under the Deckhouse Platform Enterprise Edition (EE) license. See https://github.com/deckhouse/deckhouse/blob/main/ee/LICENSE
+Copyright 2023 Flant JSC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 
 package hooks
 
 import (
 	"fmt"
-
 
 	"github.com/cloudflare/cfssl/csr"
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
@@ -17,7 +27,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
 	"github.com/deckhouse/deckhouse/go_lib/certificate"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib"
 )
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
@@ -31,7 +41,7 @@ var _ = sdk.RegisterFunc(&go_hook.HookConfig{
 			NameSelector: &types.NameSelector{
 				MatchNames: []string{"cacerts"},
 			},
-			NamespaceSelector: go_lib_istio.NsSelector(),
+			NamespaceSelector: lib.NsSelector(),
 		},
 	},
 }, generateCA)
@@ -43,7 +53,7 @@ func applyIstioCAFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, e
 		return nil, fmt.Errorf("cannot convert selfsigned ca secret to secret: %v", err)
 	}
 
-	return go_lib_istio.IstioCA{
+	return lib.IstioCA{
 		Cert:  string(secret.Data["ca-cert.pem"]),
 		Key:   string(secret.Data["ca-key.pem"]),
 		Chain: string(secret.Data["cert-chain.pem"]),
@@ -52,7 +62,7 @@ func applyIstioCAFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, e
 }
 
 func generateCA(input *go_hook.HookInput) error {
-	var istioCA go_lib_istio.IstioCA
+	var istioCA lib.IstioCA
 
 	if input.Values.Exists("istio.ca.cert") {
 		istioCA.Cert = input.Values.Get("istio.ca.cert").String()
@@ -71,7 +81,7 @@ func generateCA(input *go_hook.HookInput) error {
 		certs := input.Snapshots["secret_ca"]
 		if len(certs) == 1 {
 			var ok bool
-			istioCA, ok = certs[0].(go_lib_istio.IstioCA)
+			istioCA, ok = certs[0].(lib.IstioCA)
 			if !ok {
 				return fmt.Errorf("cannot convert certificate to certificate authority")
 			}

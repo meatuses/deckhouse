@@ -3,21 +3,19 @@ Copyright 2021 Flant JSC
 Licensed under the Deckhouse Platform Enterprise Edition (EE) license. See https://github.com/deckhouse/deckhouse/blob/main/ee/LICENSE
 */
 
-package hooks
+package ee
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
-
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook/metrics"
 	"github.com/flant/addon-operator/sdk"
 
 	"github.com/deckhouse/deckhouse/go_lib/dependency"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib"
 )
 
 var (
@@ -26,7 +24,7 @@ var (
 )
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
-	Queue: go_lib_istio.Queue("monitoring"),
+	Queue: lib.Queue("monitoring"),
 	Schedule: []go_hook.ScheduleConfig{
 		{Name: "cron", Crontab: "* * * * *"},
 	},
@@ -58,7 +56,7 @@ func monitoringAPIHosts(input *go_hook.HookInput, dc dependency.Container) error
 		apiHost := m.Get("apiHost").String()
 		apiJWT := m.Get("apiJWT").String()
 
-		bodyBytes, statusCode, err := go_lib_istio.HTTPGet(dc.GetHTTPClient(), fmt.Sprintf("https://%s/api", apiHost), apiJWT)
+		bodyBytes, statusCode, err := lib.HTTPGet(dc.GetHTTPClient(), fmt.Sprintf("https://%s/api", apiHost), apiJWT)
 		if err != nil {
 			input.LogEntry.Warnf("cannot fetch api host %s for IstioMulticluster %s, error: %s", apiHost, name, err.Error())
 			setAPIHostMetric(input.MetricsCollector, name, apiHost, 1)

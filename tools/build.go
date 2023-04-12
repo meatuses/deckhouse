@@ -45,7 +45,7 @@ var defaultModulesExcludes = []string{
 	"docs",
 	"README.md",
 	"images",
-	"hooks/**/*.go",
+	"**/*.go",
 	"template_tests",
 	".namespace",
 	"values_matrix_test.yaml",

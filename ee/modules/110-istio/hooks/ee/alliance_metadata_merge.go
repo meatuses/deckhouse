@@ -3,45 +3,43 @@ Copyright 2021 Flant JSC
 Licensed under the Deckhouse Platform Enterprise Edition (EE) license. See https://github.com/deckhouse/deckhouse/blob/main/ee/LICENSE
 */
 
-package hooks
+package ee
 
 import (
 	"strings"
 	"time"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
-
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
+	eeCrd "github.com/deckhouse/deckhouse/ee/modules/110-istio/hooks/ee/lib/crd"
 	"github.com/deckhouse/deckhouse/go_lib/jwt"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/crd"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib"
 )
 
 type IstioFederationMergeCrdInfo struct {
-	Name            string                           `json:"name"`
-	TrustDomain     string                           `json:"trustDomain"`
-	SpiffeEndpoint  string                           `json:"spiffeEndpoint"`
-	IngressGateways *[]crd.FederationIngressGateways `json:"ingressGateways"`
-	PublicServices  *[]crd.FederationPublicServices  `json:"publicServices"`
-	Public          *crd.AlliancePublicMetadata      `json:"public,omitempty"`
+	Name            string                             `json:"name"`
+	TrustDomain     string                             `json:"trustDomain"`
+	SpiffeEndpoint  string                             `json:"spiffeEndpoint"`
+	IngressGateways *[]eeCrd.FederationIngressGateways `json:"ingressGateways"`
+	PublicServices  *[]eeCrd.FederationPublicServices  `json:"publicServices"`
+	Public          *eeCrd.AlliancePublicMetadata      `json:"public,omitempty"`
 }
 
 type IstioMulticlusterMergeCrdInfo struct {
-	Name                 string                             `json:"name"`
-	SpiffeEndpoint       string                             `json:"spiffeEndpoint"`
-	EnableIngressGateway bool                               `json:"enableIngressGateway"`
-	APIHost              string                             `json:"apiHost"`
-	NetworkName          string                             `json:"networkName"`
-	APIJWT               string                             `json:"apiJWT"`
-	IngressGateways      *[]crd.MulticlusterIngressGateways `json:"ingressGateways"`
-	Public               *crd.AlliancePublicMetadata        `json:"public,omitempty"`
+	Name                 string                               `json:"name"`
+	SpiffeEndpoint       string                               `json:"spiffeEndpoint"`
+	EnableIngressGateway bool                                 `json:"enableIngressGateway"`
+	APIHost              string                               `json:"apiHost"`
+	NetworkName          string                               `json:"networkName"`
+	APIJWT               string                               `json:"apiJWT"`
+	IngressGateways      *[]eeCrd.MulticlusterIngressGateways `json:"ingressGateways"`
+	Public               *eeCrd.AlliancePublicMetadata        `json:"public,omitempty"`
 }
 
 func applyFederationMergeFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, error) {
-	var federation crd.IstioFederation
+	var federation eeCrd.IstioFederation
 	err := sdk.FromUnstructured(obj, &federation)
 	if err != nil {
 		return nil, err
@@ -50,9 +48,9 @@ func applyFederationMergeFilter(obj *unstructured.Unstructured) (go_hook.FilterR
 	me := federation.Spec.MetadataEndpoint
 	me = strings.TrimSuffix(me, "/")
 
-	var igs *[]crd.FederationIngressGateways
-	var pss *[]crd.FederationPublicServices
-	var p *crd.AlliancePublicMetadata
+	var igs *[]eeCrd.FederationIngressGateways
+	var pss *[]eeCrd.FederationPublicServices
+	var p *eeCrd.AlliancePublicMetadata
 
 	if federation.Status.MetadataCache.Private != nil {
 		if federation.Status.MetadataCache.Private.IngressGateways != nil {
@@ -77,7 +75,7 @@ func applyFederationMergeFilter(obj *unstructured.Unstructured) (go_hook.FilterR
 }
 
 func applyMulticlusterMergeFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, error) {
-	var multicluster crd.IstioMulticluster
+	var multicluster eeCrd.IstioMulticluster
 
 	err := sdk.FromUnstructured(obj, &multicluster)
 	if err != nil {
@@ -87,10 +85,10 @@ func applyMulticlusterMergeFilter(obj *unstructured.Unstructured) (go_hook.Filte
 	me := multicluster.Spec.MetadataEndpoint
 	me = strings.TrimSuffix(me, "/")
 
-	var igs *[]crd.MulticlusterIngressGateways
+	var igs *[]eeCrd.MulticlusterIngressGateways
 	var apiHost string
 	var networkName string
-	var p *crd.AlliancePublicMetadata
+	var p *eeCrd.AlliancePublicMetadata
 
 	if multicluster.Status.MetadataCache.Private != nil {
 		if multicluster.Status.MetadataCache.Private.IngressGateways != nil {
@@ -115,7 +113,7 @@ func applyMulticlusterMergeFilter(obj *unstructured.Unstructured) (go_hook.Filte
 }
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
-	Queue: go_lib_istio.Queue("alliance"),
+	Queue: lib.Queue("alliance"),
 	Kubernetes: []go_hook.KubernetesConfig{
 		{
 			Name:       "federations",
@@ -144,7 +142,7 @@ func metadataMerge(input *go_hook.HookInput) error {
 	var properMulticlusters = make([]IstioMulticlusterMergeCrdInfo, 0)
 	var multiclustersNeedIngressGateway = false
 	//                              map[clusterUUID]public
-	var remotePublicMetadata = make(map[string]crd.AlliancePublicMetadata)
+	var remotePublicMetadata = make(map[string]eeCrd.AlliancePublicMetadata)
 
 	var myTrustDomain = input.Values.Get("global.discovery.clusterDomain").String()
 

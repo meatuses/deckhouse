@@ -3,12 +3,11 @@ Copyright 2022 Flant JSC
 Licensed under the Deckhouse Platform Enterprise Edition (EE) license. See https://github.com/deckhouse/deckhouse/blob/main/ee/LICENSE
 */
 
-package hooks
+package ee
 
 import (
 	"encoding/json"
 	"fmt"
-
 
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook/metrics"
@@ -19,8 +18,8 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
 	"github.com/deckhouse/deckhouse/go_lib/telemetry"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio/istio_versions"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib/istio_versions"
 )
 
 const (
@@ -34,13 +33,13 @@ const (
 )
 
 var _ = sdk.RegisterFunc(&go_hook.HookConfig{
-	Queue: go_lib_istio.Queue("dataplane-handler"),
+	Queue: lib.Queue("dataplane-handler"),
 	Kubernetes: []go_hook.KubernetesConfig{
 		{
 			Name:       "namespaces_global_revision",
 			ApiVersion: "v1",
 			Kind:       "Namespace",
-			FilterFunc: applyNamespaceFilter, // from revisions_discovery.go
+			FilterFunc: applyIstioDrivenNamespaceFilter,
 			LabelSelector: &metav1.LabelSelector{
 				MatchLabels: map[string]string{"istio-injection": "enabled"},
 			},
@@ -49,7 +48,7 @@ var _ = sdk.RegisterFunc(&go_hook.HookConfig{
 			Name:       "namespaces_definite_revision",
 			ApiVersion: "v1",
 			Kind:       "Namespace",
-			FilterFunc: applyNamespaceFilter, // from revisions_discovery.go
+			FilterFunc: applyIstioDrivenNamespaceFilter,
 			LabelSelector: &metav1.LabelSelector{
 				MatchExpressions: []metav1.LabelSelectorRequirement{
 					{
@@ -241,6 +240,35 @@ type IstioDrivenPodFilterResult struct {
 	Owner            Owner
 }
 
+type IstioDrivenNamespaceFilterResult struct {
+	Name                    string
+	DeletionTimestampExists bool
+	RevisionRaw             string
+	Revision                string
+	AutoUpgradeLabelExists  bool
+}
+
+func applyIstioDrivenNamespaceFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, error) {
+	_, deletionTimestampExists := obj.GetAnnotations()["deletionTimestamp"]
+
+	var namespaceInfo = IstioDrivenNamespaceFilterResult{
+		Name:                    obj.GetName(),
+		DeletionTimestampExists: deletionTimestampExists,
+	}
+
+	if revision, ok := obj.GetLabels()[autoUpgradeLabelName]; ok {
+		namespaceInfo.AutoUpgradeLabelExists = revision == "true"
+	}
+
+	if revision, ok := obj.GetLabels()["istio.io/rev"]; ok {
+		namespaceInfo.RevisionRaw = revision
+	} else {
+		namespaceInfo.RevisionRaw = "global"
+	}
+
+	return namespaceInfo, nil
+}
+
 func applyIstioDrivenPodFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, error) {
 	pod := v1.Pod{}
 	err := sdk.FromUnstructured(obj, &pod)
@@ -390,9 +418,9 @@ func dataplaneHandler(input *go_hook.HookInput) error {
 	input.MetricsCollector.Expire(metadataExporterMetricsGroup)
 
 	// create istio namespace map to find out needed revisions and versions
-	istioNamespaceMap := make(map[string]IstioNamespaceFilterResult)
+	istioNamespaceMap := make(map[string]IstioDrivenNamespaceFilterResult)
 	for _, ns := range append(input.Snapshots["namespaces_definite_revision"], input.Snapshots["namespaces_global_revision"]...) {
-		nsInfo := ns.(IstioNamespaceFilterResult)
+		nsInfo := ns.(IstioDrivenNamespaceFilterResult)
 		if nsInfo.RevisionRaw == "global" {
 			nsInfo.Revision = globalRevision
 		} else {

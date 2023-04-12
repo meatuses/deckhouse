@@ -3,12 +3,10 @@ Copyright 2022 Flant JSC
 Licensed under the Deckhouse Platform Enterprise Edition (EE) license. See https://github.com/deckhouse/deckhouse/blob/main/ee/LICENSE
 */
 
-package hooks
+package ee
 
 import (
 	"strings"
-
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
 
 	"github.com/flant/shell-operator/pkg/metric_storage/operation"
 	. "github.com/onsi/ginkgo"
@@ -16,7 +14,7 @@ import (
 	. "github.com/onsi/gomega"
 	"k8s.io/utils/pointer"
 
-	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/go_lib_istio"
+	"github.com/deckhouse/deckhouse/modules/110-istio/hooks/lib"
 	. "github.com/deckhouse/deckhouse/testing/hooks"
 )
 
@@ -52,7 +50,7 @@ func generateIstioNsYAML(ns nsParams) string {
 	if ns.Name == "" {
 		ns.Name = nsName
 	}
-	return go_lib_istio.TemplateToYAML(nsTemplate, ns)
+	return lib.TemplateToYAML(nsTemplate, ns)
 }
 
 type deployParams struct {
@@ -97,7 +95,7 @@ func generateIstioDeploymentYAML(deploy deployParams) string {
 	if deploy.Name == "" {
 		deploy.Name = deployName
 	}
-	return go_lib_istio.TemplateToYAML(deployTemplate, deploy)
+	return lib.TemplateToYAML(deployTemplate, deploy)
 }
 
 type stsParams struct {
@@ -144,7 +142,7 @@ func generateIstioStatefulSetYAML(sts stsParams) string {
 	if sts.Name == "" {
 		sts.Name = stsName
 	}
-	return go_lib_istio.TemplateToYAML(stsTemplate, sts)
+	return lib.TemplateToYAML(stsTemplate, sts)
 }
 
 type dsParams struct {
@@ -186,7 +184,7 @@ func generateIstioDaemonSetYAML(ds dsParams) string {
 	if ds.Name == "" {
 		ds.Name = dsName
 	}
-	return go_lib_istio.TemplateToYAML(dsTemplate, ds)
+	return lib.TemplateToYAML(dsTemplate, ds)
 }
 
 type rsParams struct {
@@ -228,7 +226,7 @@ func generateIstioReplicaSetYAML(rs rsParams) string {
 	if rs.Name == "" {
 		rs.Name = rsName
 	}
-	return go_lib_istio.TemplateToYAML(rsTemplate, rs)
+	return lib.TemplateToYAML(rsTemplate, rs)
 }
 
 type podParams struct {
@@ -283,7 +281,7 @@ func generateIstioPodYAML(pod podParams) string {
 	if pod.Name == "" {
 		pod.Name = podName
 	}
-	return go_lib_istio.TemplateToYAML(podTemplate, pod)
+	return lib.TemplateToYAML(podTemplate, pod)
 }
 
 type wantedMetric struct {

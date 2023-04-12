@@ -32,7 +32,9 @@ properties:
       Whether to handle HTTP/1.0 requests in istio-sidecars or deny them with `426 Upgrade Required` response.
   federation:
     type: object
+    x-doc-d8Revision: ee
     description: Parameters for federating with other clusters.
+    x-doc-d8Revision: ee
     default: {}
     properties:
       enabled:
@@ -42,7 +44,9 @@ properties:
         x-examples: [true]
   multicluster:
     type: object
+    x-doc-d8Revision: ee
     description: Multicluster parameters.
+    x-doc-d8Revision: ee
     default: {}
     properties:
       enabled:
@@ -52,18 +56,22 @@ properties:
         x-examples: [true]
   alliance:
     type: object
+    x-doc-d8Revision: ee
     description: Common options both for federation and multicluster.
+    x-doc-d8Revision: ee
     default: {}
     properties:
       ingressGateway:
         type: object
         description: ingressgateway settings.
+        x-doc-d8Revision: ee
         default: {}
         properties:
           inlet:
             type: string
             enum: [LoadBalancer, NodePort]
             x-examples: [LoadBalancer]
+            x-doc-d8Revision: ee
             description: |
               The method for exposing ingressgateway.
               - `LoadBalancer` — is a recommended method if you have a cloud-based cluster and it supports Load Balancing.
@@ -72,6 +80,7 @@ properties:
           nodePort:
             type: object
             description: Special settings for NodePort inlet.
+            x-doc-d8Revision: ee
             default: {}
             x-examples: [{}, {"port": 30001}]
             properties:
@@ -85,6 +94,7 @@ properties:
             additionalProperties:
               type: string
             description: Additional service annotations. They can be used, e.g., for configuring a local LB in the Yandex Cloud (using the `yandex.cpi.flant.com/listener-subnet-id` annotation).
+            x-doc-d8Revision: ee
             example:
               yandex.cpi.flant.com/listener-subnet-id: xyz-123
           nodeSelector:
@@ -96,12 +106,14 @@ properties:
               ingressgateway DaemonSet nodeSelector.
 
               The same as the `spec.nodeSelector` pod parameter in Kubernetes.
+            x-doc-d8Revision: ee
           tolerations:
             type: array
             description: |
               ingressgateway DaemonSet tolerations.
 
               The same as `spec.tolerations` for the Kubernetes pod.
+            x-doc-d8Revision: ee
             items:
               type: object
               properties:
