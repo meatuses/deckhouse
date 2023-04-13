@@ -1046,6 +1046,7 @@ jobs:
 
   web_links_test:
     name: Web links test
+    if: ${{ false || github.repository == 'deckhouse/deckhouse' }}
     needs:
       - git_info
       - doc_web_build

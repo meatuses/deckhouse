@@ -150,7 +150,7 @@ jobs:
 {!{ tmpl.Exec "tests_template" (slice $ctx "openapi_test_cases" "build_deckhouse") | strings.Indent 4 }!}
 
   web_links_test:
-    if: ${{ needs.pull_request_info.outputs.changes_docs == 'true' }}
+    if: ${{ needs.pull_request_info.outputs.changes_docs == 'true' && github.repository == 'deckhouse/deckhouse' }}
     name: Web links test
     needs:
       - git_info

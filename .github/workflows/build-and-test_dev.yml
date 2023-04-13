@@ -1291,7 +1291,7 @@ jobs:
     # </template: tests_template>
 
   web_links_test:
-    if: ${{ needs.pull_request_info.outputs.changes_docs == 'true' }}
+    if: ${{ needs.pull_request_info.outputs.changes_docs == 'true' && github.repository == 'deckhouse/deckhouse' }}
     name: Web links test
     needs:
       - git_info
