@@ -171,7 +171,7 @@ metadata:
   name: rmq-queue-forum-messages
   namespace: mynamespace
 spec:
-  query: sum (rabbitmq_queue_messages{<<.LabelMatchers>>,queue=~"send_forum_message",vhost="/"}) by (<<.GroupBy>>)
+  query: sum (rabbitmq_queue_messages{<<.LabelMatchers>>,queue=~"send_forum_message",vhost="/"}) by (<<.GroupBy>>) OR on() vector(0)
 ---
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
@@ -217,7 +217,7 @@ metadata:
   name: rmq-queue-forum-messages
   namespace: mynamespace
 spec:
-  query: sum (avg_over_time(rabbitmq_queue_messages{<<.LabelMatchers>>,queue=~"send_forum_message",vhost="/"}[5m])) by (<<.GroupBy>>)
+  query: sum (avg_over_time(rabbitmq_queue_messages{<<.LabelMatchers>>,queue=~"send_forum_message",vhost="/"}[5m])) by (<<.GroupBy>>) OR on() vector(0)
 ---
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
@@ -260,7 +260,7 @@ kind: PodMetric
 metadata:
   name: php-fpm-active-workers
 spec:
-  query: sum (phpfpm_processes_total{state="active",<<.LabelMatchers>>}) by (<<.GroupBy>>)
+  query: sum (phpfpm_processes_total{state="active",<<.LabelMatchers>>}) by (<<.GroupBy>>) OR on() vector(0)
 ---
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
@@ -304,7 +304,7 @@ metadata:
   name: php-fpm-active-worker
 spec:
   # Percentage of active php-fpm workers. The round() function rounds the percentage.
-  query: round(sum by(<<.GroupBy>>) (phpfpm_processes_total{state="active",<<.LabelMatchers>>}) / sum by(<<.GroupBy>>) (phpfpm_processes_total{<<.LabelMatchers>>}) * 100)
+  query: round(sum by(<<.GroupBy>>) (phpfpm_processes_total{state="active",<<.LabelMatchers>>}) / sum by(<<.GroupBy>>) (phpfpm_processes_total{<<.LabelMatchers>>}) * 100) OR on() vector(0)
 ---
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
@@ -355,7 +355,7 @@ spec:
     # The name of the new metric. Pay attention! The 'kube_adapter_metric_' prefix is required.
     - record: kube_adapter_metric_mymetric
       # The results of this request will be passed to the final metric; there is no reason to include excess labels into it.
-      expr: sum(ingress_nginx_detail_sent_bytes_sum) by (namespace,ingress)
+      expr: sum(ingress_nginx_detail_sent_bytes_sum) by (namespace,ingress) OR on() vector(0)
 ```
 
 {% endraw %}
@@ -427,7 +427,7 @@ spec:
   - name: prometheus-metrics-adapter.sqs_messages_visible # the recommended template
     rules:
     - record: kube_adapter_metric_sqs_messages_visible # Pay attention! The 'kube_adapter_metric_' prefix is required.
-      expr: sum (sqs_messages_visible) by (queue)
+      expr: sum (sqs_messages_visible) by (queue) OR on() vector(0)
 ---
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
