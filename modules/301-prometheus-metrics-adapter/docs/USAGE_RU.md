@@ -3,7 +3,7 @@ title: "Модуль prometheus-metrics-adapter: примеры конфигур
 search: autoscaler, HorizontalPodAutoscaler
 ---
 
-Далее рассматривается только HPA с [apiVersion: autoscaling/v2beta2](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#horizontalpodautoscalerspec-v2beta2-autoscaling), чья поддержка появилась начиная с Kubernetes v1.12.
+Далее рассматривается только HPA с [apiVersion: autoscaling/v2beta2](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#horizontalpodautoscalerspec-v2beta2-autoscaling), чья поддержка появилась начиная с Kubernetes v1.12.
 
 В общем виде, для настройки HPA требуется:
 * определить, что масштабируем (`.spec.scaleTargetRef`);
@@ -113,6 +113,14 @@ spec:
 {% raw %}
 
 ```yaml
+apiVersion: deckhouse.io/v1beta1
+kind: IngressMetric
+metadata:
+  name: mymetric
+  namespace: mynamespace
+spec:
+  query: sum(rate(ingress_nginx_detail_requests_total{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>) OR on() vector(0)
+---
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
 metadata:
@@ -133,17 +141,18 @@ spec:
     object:
       # Объект, который обладает метриками в Prometheus.
       describedObject:
-        apiVersion: extensions/v1beta1
+        apiVersion: networking.k8s.io/v1
         kind: Ingress
         name: myingress
       metric:
         # Метрика, зарегистрированная с помощью CR IngressMetric или ClusterIngressMetric.
+        # Можно использовать rps_1m, rps_5m или rps_15m которые поставляются с модулем prometheus-metrics-adapter.
         name: mymetric
       target:
-        # Для метрик типа Object можно использовать только `type: Value`.
-        type: Value
-        # Масштабирование, если значение кастомной метрики больше 10.
-        value: 10
+        # Для метрик типа Object можно использовать `Value` или `AverageValue`.
+        type: AverageValue
+        # Масштабирование, если значение кастомной метрики больше 10 / currentReplicas.
+        averageValue: 10
 ```
 
 {% endraw %}
@@ -452,23 +461,26 @@ spec:
 ### Как получить список кастомных метрик?
 
 ```shell
-kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/
+kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/ | jq .
 ```
 
 ### Как получить значение метрики, привязанной к объекту?
 
 ```shell
-kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/my-namespace/services/*/my-service-metric
+kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/my-namespace/services/*/my-service-metric | jq .
+kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/my-namespace/ingresses/*/rps_1m | jq .
+kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/my-namespace/ingresses/*/mymetric | jq .
 ```
 
 ### Как получить значение метрики, созданной через `NamespaceMetric`?
 
 ```shell
-kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/my-namespace/metrics/my-ns-metric
+kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/my-namespace/metrics/my-ns-metric | jq .
 ```
 
 ### Как получить external-метрики?
 
 ```shell
-kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1"
+kubectl get --raw /apis/external.metrics.k8s.io/v1beta1 | jq .
+kubectl get --raw /apis/external.metrics.k8s.io/v1beta1/namespaces/d8-ingress-nginx/d8_ingress_nginx_ds_cpu_utilization | jq .
 ```

@@ -3,7 +3,7 @@ title: "The prometheus-metrics-adapter module: usage"
 search: autoscaler, HorizontalPodAutoscaler
 ---
 
-Below, only HPAs of the [apiVersion: autoscaling/v2beta2](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#horizontalpodautoscalerspec-v2beta2-autoscaling) type (supported from Kubernetes v1.12 onward) are considered.
+Below, only HPAs of the [apiVersion: autoscaling/v2beta2](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#horizontalpodautoscalerspec-v2beta2-autoscaling) type (supported from Kubernetes v1.12 onward) are considered.
 
 To configure an HPA, you need to:
 * determine the scaling target (`.spec.scaleTargetRef`);
@@ -113,6 +113,14 @@ After a custom metric is registered, you can refer to it. For the HPA, custom me
 {% raw %}
 
 ```yaml
+apiVersion: deckhouse.io/v1beta1
+kind: IngressMetric
+metadata:
+  name: mymetric
+  namespace: mynamespace
+spec:
+  query: sum(rate(ingress_nginx_detail_requests_total{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>) OR on() vector(0)
+---
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
 metadata:
@@ -132,17 +140,18 @@ spec:
     object:
       # Some object that has metrics in Prometheus.
       describedObject:
-        apiVersion: extensions/v1beta1
+        apiVersion: networking.k8s.io/v1
         kind: Ingress
         name: myingress
       metric:
         # The metric registered using IngressMetric or ClusterIngressMetric CRs.
+        # Can be used rps_1m, rps_5m or rps_15m which come with the prometheus-metrics-adapter module.
         name: mymetric
       target:
-        # Only `type: Value` can be used for metrics of the Object type.
-        type: Value
-        # Scale up if the value of our custom metric is greater than 10.
-        value: 10
+        # `Value` or `AverageValue` can be used for metrics of the Object type.
+        type: AverageValue
+        # Scale up if the value of our custom metric is greater than 10 / currentReplicas.
+        averageValue: 10
 ```
 
 {% endraw %}
@@ -454,23 +463,26 @@ spec:
 ### How do I get a list of custom metrics?
 
 ```shell
-kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/
+kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/ | jq .
 ```
 
 ### How do I get the value of a metric associated with an object?
 
 ```shell
-kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/my-namespace/services/*/my-service-metric
+kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/my-namespace/services/*/my-service-metric | jq .
+kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/my-namespace/ingresses/*/rps_1m | jq .
+kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/my-namespace/ingresses/*/mymetric | jq .
 ```
 
 ### How do I get the value of a metric created via `NamespaceMetric`?
 
 ```shell
-kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/my-namespace/metrics/my-ns-metric
+kubectl get --raw /apis/custom.metrics.k8s.io/v1beta1/namespaces/my-namespace/metrics/my-ns-metric | jq .
 ```
 
 ### How do I get external metrics?
 
 ```shell
-kubectl get --raw "/apis/external.metrics.k8s.io/v1beta1"
+kubectl get --raw /apis/external.metrics.k8s.io/v1beta1 | jq .
+kubectl get --raw /apis/external.metrics.k8s.io/v1beta1/namespaces/d8-ingress-nginx/d8_ingress_nginx_ds_cpu_utilization | jq .
 ```
