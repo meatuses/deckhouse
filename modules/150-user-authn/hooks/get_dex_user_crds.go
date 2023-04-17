@@ -24,6 +24,7 @@ import (
 	"github.com/flant/addon-operator/pkg/module_manager/go_hook"
 	"github.com/flant/addon-operator/sdk"
 	"github.com/flant/shell-operator/pkg/kube/object_patch"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 
 	"github.com/deckhouse/deckhouse/go_lib/encoding"
@@ -41,6 +42,24 @@ type DexUser struct {
 	Status map[string]interface{} `json:"status,omitempty"`
 
 	ExpireAt string `json:"-"`
+}
+
+type DexGroup struct {
+	Metadata metav1.ObjectMeta      `json:"metadata" yaml:"metadata"`
+	Spec     DexGroupSpec           `json:"spec" yaml:"spec"`
+	Status   map[string]interface{} `json:"status,omitempty" yaml:"status,omitempty"`
+}
+
+type DexGroupSpec struct {
+	Members []struct {
+		Kind string `json:"kind" yaml:"kind"`
+		Name string `json:"name" yaml:"name"`
+	} `json:"members" yaml:"members"`
+}
+
+type UserGroup struct {
+	UserName string
+	Groups   []string
 }
 
 func applyDexUserFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, error) {
@@ -112,8 +131,27 @@ var _ = sdk.RegisterFunc(&go_hook.HookConfig{
 			Kind:       "User",
 			FilterFunc: applyDexUserFilter,
 		},
+		{
+			Name:       "groups",
+			ApiVersion: "deckhouse.io/v1",
+			Kind:       "Group",
+			FilterFunc: applyDexGroupFilter,
+		},
 	},
 }, getDexUsers)
+
+func makeUserToGroupsMap(input *go_hook.HookInput) map[string][]string {
+	userToGroupsMap := map[string][]string{}
+	for _, obj := range input.Snapshots["groups"] {
+		group := obj.(*DexGroup)
+		for _, member := range group.Spec.Members {
+			if member.Kind == "User" {
+				userToGroupsMap[member.Name] = append(userToGroupsMap[member.Name], group.Metadata.Name)
+			}
+		}
+	}
+	return userToGroupsMap
+}
 
 func getDexUsers(input *go_hook.HookInput) error {
 	users := make([]DexUser, 0, len(input.Snapshots["users"]))
@@ -124,10 +162,34 @@ func getDexUsers(input *go_hook.HookInput) error {
 			return fmt.Errorf("cannot convert user to dex user")
 		}
 
+		var groups []string
+		groupsFromUser, _ := dexUser.Spec["groups"].([]interface{})
+		for _, group := range groupsFromUser {
+			groups = append(groups, group.(string))
+		}
+
+		userToGroupsMap := makeUserToGroupsMap(input)
+		groups = append(groups, userToGroupsMap[dexUser.Name]...)
+
+		fmt.Println("map: ", userToGroupsMap)
+		fmt.Println("res: ", groups)
+
 		users = append(users, dexUser)
 		if dexUser.ExpireAt == "" {
 			continue
 		}
+
+		groupsPatch := map[string]interface{}{
+			"spec": map[string]interface{}{
+				"groups": []string{"asd"},
+			},
+		}
+
+
+		fmt.Println("groupsPatch: ", groupsPatch)
+		fmt.Println("users: ", input.Snapshots["users"])
+
+		input.PatchCollector.MergePatch(groupsPatch, "deckhouse.io/v1", "User", "", dexUser.Name)
 
 		patch := map[string]interface{}{
 			"status": expirePatch{
@@ -140,4 +202,14 @@ func getDexUsers(input *go_hook.HookInput) error {
 
 	input.Values.Set("userAuthn.internal.dexUsersCRDs", users)
 	return nil
+}
+
+func applyDexGroupFilter(obj *unstructured.Unstructured) (go_hook.FilterResult, error) {
+	var group = &DexGroup{}
+	err := sdk.FromUnstructured(obj, group)
+	if err != nil {
+		return nil, fmt.Errorf("cannot convert kubernetes object: %v", err)
+	}
+
+	return group, nil
 }

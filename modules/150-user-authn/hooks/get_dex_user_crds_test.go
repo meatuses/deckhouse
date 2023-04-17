@@ -29,6 +29,7 @@ import (
 var _ = Describe("User Authn hooks :: get dex user crds ::", func() {
 	f := HookExecutionConfigInit(`{"userAuthn":{"internal": {}}}`, "")
 	f.RegisterCRD("deckhouse.io", "v1", "User", false)
+	f.RegisterCRD("deckhouse.io", "v1", "Group", false)
 
 	Context("Fresh cluster", func() {
 		BeforeEach(func() {
@@ -54,10 +55,25 @@ spec:
   - Everyone
   password: password
   ttl: 30m
+---
+apiVersion: deckhouse.io/v1
+kind: Group
+metadata:
+  name: gods
+spec:
+  members:
+  - kind: User
+    name: Athena
+  - kind: User
+    name: Minerva
+  - kind: User
+    name: Freya
+  - kind: User
+    name: admin
 `))
 				f.RunHook()
 			})
-			It("Should fill internal values", func() {
+			FIt("Should fill internal values", func() {
 				Expect(f).To(ExecuteSuccessfully())
 				Expect(f.BindingContexts.Array()).ShouldNot(BeEmpty())
 
