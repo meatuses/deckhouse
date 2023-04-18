@@ -5,7 +5,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -16,7 +17,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -27,7 +29,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -38,7 +41,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -49,7 +53,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -60,7 +65,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -71,7 +77,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -82,7 +89,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -93,7 +101,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -104,7 +113,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -115,7 +125,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -126,7 +137,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -137,7 +149,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -148,7 +161,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -159,7 +173,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -170,7 +185,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -181,7 +197,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -192,7 +209,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -203,7 +221,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -214,7 +233,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -225,7 +245,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -236,7 +257,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -247,7 +269,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -258,7 +281,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -269,7 +293,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -280,7 +305,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -291,7 +317,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -302,7 +329,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -313,7 +341,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
@@ -324,7 +353,8 @@
     - docs
     - README.md
     - images
-    - '**/*.go'
+    - hooks/**/*.go
+    - hooks/ee/**/*.go
     - template_tests
     - .namespace
     - values_matrix_test.yaml
