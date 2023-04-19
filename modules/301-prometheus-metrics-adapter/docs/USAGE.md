@@ -150,7 +150,7 @@ spec:
       target:
         # `Value` or `AverageValue` can be used for metrics of the Object type.
         type: AverageValue
-        # Scale up if the value of our custom metric is greater than 10 / currentReplicas.
+        # Scale up if the value of our custom metric is greater than 10 / number of replicas.
         averageValue: 10
 ```
 
