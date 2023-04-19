@@ -355,7 +355,7 @@ spec:
     # The name of the new metric. Pay attention! The 'kube_adapter_metric_' prefix is required.
     - record: kube_adapter_metric_mymetric
       # The results of this request will be passed to the final metric; there is no reason to include excess labels into it.
-      expr: sum(ingress_nginx_detail_sent_bytes_sum) by (namespace,ingress) OR on() vector(0)
+      expr: sum(ingress_nginx_detail_sent_bytes_sum) by (namespace,ingress)
 ```
 
 {% endraw %}

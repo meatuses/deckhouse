@@ -358,7 +358,7 @@ spec:
     # Важно! Префикс 'kube_adapter_metric_' обязателен.
     - record: kube_adapter_metric_mymetric
       # Запрос, результаты которого попадут в итоговую метрику, нет смысла тащить в неё лишние лейблы.
-      expr: sum(ingress_nginx_detail_sent_bytes_sum) by (namespace,ingress) OR on() vector(0)
+      expr: sum(ingress_nginx_detail_sent_bytes_sum) by (namespace,ingress)
 ```
 
 {% endraw %}
