@@ -59,7 +59,7 @@ data:
       name:
         matches: ".*"
         as: "cpu_1m"
-      metricsQuery: 'sum(irate(<<.Series>>{<<.LabelMatchers>>, container!="POD"}[5m])) by (<<.GroupBy>>) OR on() vector(0)'
+      metricsQuery: 'sum(irate(<<.Series>>{<<.LabelMatchers>>, container!="POD"}[5m])) by (<<.GroupBy>>)'
     - seriesQuery: 'container_memory_working_set_bytes:without_kmem{namespace!="",pod!="",container!="POD"}'
       resources:
         overrides:
@@ -68,7 +68,7 @@ data:
       name:
         matches: ".*"
         as: "memory_1m"
-      metricsQuery: 'sum(avg_over_time(<<.Series>>{<<.LabelMatchers>>, container!="POD"}[1m])) by (<<.GroupBy>>) OR on() vector(0)'
+      metricsQuery: 'sum(avg_over_time(<<.Series>>{<<.LabelMatchers>>, container!="POD"}[1m])) by (<<.GroupBy>>)'
 {{- range list "5m" "15m" }}
     - seriesQuery: 'ingress_nginx_detail_requests_total{namespace!="",ingress!=""}'
       resources:
@@ -87,7 +87,7 @@ data:
       name:
         matches: ".*"
         as: "cpu_{{ . }}"
-      metricsQuery: 'sum(rate(<<.Series>>{<<.LabelMatchers>>, container!="POD"}[{{ . }}])) by (<<.GroupBy>>) OR on() vector(0)'
+      metricsQuery: 'sum(rate(<<.Series>>{<<.LabelMatchers>>, container!="POD"}[{{ . }}])) by (<<.GroupBy>>)'
     - seriesQuery: 'container_memory_working_set_bytes:without_kmem{namespace!="",pod!="",container!="POD"}'
       resources:
         overrides:
@@ -96,7 +96,7 @@ data:
       name:
         matches: ".*"
         as: "memory_{{ . }}"
-      metricsQuery: 'sum(avg_over_time(<<.Series>>{<<.LabelMatchers>>, container!="POD"}[{{ . }}])) by (<<.GroupBy>>) OR on() vector(0)'
+      metricsQuery: 'sum(avg_over_time(<<.Series>>{<<.LabelMatchers>>, container!="POD"}[{{ . }}])) by (<<.GroupBy>>)'
 {{- end }}
 {{- range (list "pod" "deployment" "daemonset" "statefulset" "ingress" "service" "namespace") }}
   {{- $resource := . }}
