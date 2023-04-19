@@ -171,7 +171,7 @@ metadata:
   name: rmq-queue-forum-messages
   namespace: mynamespace
 spec:
-  query: sum (rabbitmq_queue_messages{<<.LabelMatchers>>,queue=~"send_forum_message",vhost="/"}) by (<<.GroupBy>>) OR on() vector(0)
+  query: sum (rabbitmq_queue_messages{<<.LabelMatchers>>,queue=~"send_forum_message",vhost="/"}) by (<<.GroupBy>>)
 ---
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
@@ -217,7 +217,7 @@ metadata:
   name: rmq-queue-forum-messages
   namespace: mynamespace
 spec:
-  query: sum (avg_over_time(rabbitmq_queue_messages{<<.LabelMatchers>>,queue=~"send_forum_message",vhost="/"}[5m])) by (<<.GroupBy>>) OR on() vector(0)
+  query: sum (avg_over_time(rabbitmq_queue_messages{<<.LabelMatchers>>,queue=~"send_forum_message",vhost="/"}[5m])) by (<<.GroupBy>>)
 ---
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
@@ -260,7 +260,7 @@ kind: PodMetric
 metadata:
   name: php-fpm-active-workers
 spec:
-  query: sum (phpfpm_processes_total{state="active",<<.LabelMatchers>>}) by (<<.GroupBy>>) OR on() vector(0)
+  query: sum (phpfpm_processes_total{state="active",<<.LabelMatchers>>}) by (<<.GroupBy>>)
 ---
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
@@ -304,7 +304,7 @@ metadata:
   name: php-fpm-active-worker
 spec:
   # Percentage of active php-fpm workers. The round() function rounds the percentage.
-  query: round(sum by(<<.GroupBy>>) (phpfpm_processes_total{state="active",<<.LabelMatchers>>}) / sum by(<<.GroupBy>>) (phpfpm_processes_total{<<.LabelMatchers>>}) * 100) OR on() vector(0)
+  query: round(sum by(<<.GroupBy>>) (phpfpm_processes_total{state="active",<<.LabelMatchers>>}) / sum by(<<.GroupBy>>) (phpfpm_processes_total{<<.LabelMatchers>>}) * 100)
 ---
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
@@ -427,7 +427,7 @@ spec:
   - name: prometheus-metrics-adapter.sqs_messages_visible # the recommended template
     rules:
     - record: kube_adapter_metric_sqs_messages_visible # Pay attention! The 'kube_adapter_metric_' prefix is required.
-      expr: sum (sqs_messages_visible) by (queue) OR on() vector(0)
+      expr: sum (sqs_messages_visible) by (queue)
 ---
 kind: HorizontalPodAutoscaler
 apiVersion: autoscaling/v2beta2
