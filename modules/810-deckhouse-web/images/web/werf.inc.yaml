@@ -35,7 +35,7 @@ ansible:
       args:
         chdir: /src
 git:
-- url: git@github.com:kubernetes/website.git
+- url: https://github.com/kubernetes/website.git
   tag: snapshot-final-v1.26
   add: /
   to: /src
@@ -257,6 +257,8 @@ import:
   before: setup
   includePaths:
   - docs/concepts/
+  - docs/tutorials/
+  - docs/tasks/
 #  - docs
 #  - ru
 #  - en
@@ -268,6 +270,9 @@ import:
   before: setup
   includePaths:
   - docs/concepts/
+  - docs/tutorials/
+  - docs/tasks/
+#  - docs/concepts/
 #  - docs
 #  - ru
 #  - en
