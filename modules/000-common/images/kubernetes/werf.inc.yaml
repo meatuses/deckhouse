@@ -1,9 +1,10 @@
+{{- $buildImageTags := .Files.Get "modules/000-common/images/kubernetes/k8s_build_images.yml" | fromYaml }}
 {{- range $key, $value := .CandiVersionMap.k8s }}
   {{- $version := $key | toString }}
   {{- $patch := $value.patch | toString }}
   {{- $image_version := printf "%s.%s" $version $patch | replace "." "-" }}
---
+  {{- $build_version := index $buildImageTags (printf "%s.%s" $version $patch) }}
+---
 artifact: {{ $.ModuleName }}/{{ $.ImageName }}-artifact-{{ $image_version }}
-from: registry.k8s.io/sig-storage/csi-attacher:{{ $value.csi.atta}
-  {{- end }}
+from: registry.k8s.io/build-image/kube-cross:{{ $build_version }}
 {{- end }}

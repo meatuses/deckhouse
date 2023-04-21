@@ -47,7 +47,6 @@ function update_version_map() {
 function update_k8s_build_image() {
   local IMAGE_TAG
   IMAGE_TAG="$(curl -s https://raw.githubusercontent.com/kubernetes/kubernetes/v${1}.${2}/build/build-image/cross/VERSION)"
-  echo $IMAGE_TAG
   yq -i e ".\"${1}.${2}\" = \"${IMAGE_TAG}\""  ../../modules/000-common/images/kubernetes/k8s_build_images.yml
 }
 
@@ -58,11 +57,11 @@ for VERSION in $(yq e ../version_map.yml -o json | jq -r '.k8s | keys[]'); do
     # Get last patch version from github CHANGELOG.md
     NEW_FULL_VERSION="$(curl -s "https://raw.githubusercontent.com/kubernetes/kubernetes/master/CHANGELOG/CHANGELOG-${VERSION}.md" | grep '## Downloads for v' | head -n 1 | grep -Eo "${VERSION}.[0-9]+")"
     NEW_PATCH="$(awk -F "." '{print $3}' <<< "${NEW_FULL_VERSION}")"
-      update_k8s_build_image "${VERSION}" "${NEW_PATCH}"
     if [[ "${NEW_PATCH}" -ne "${PATCH}" ]]; then
       PR_DESCRIPTION="${PR_DESCRIPTION}$(echo -e "\n* New kubernetes patch version ${VERSION}.${NEW_PATCH}.")"
       CREATE_PR=true
       update_version_map "${VERSION}" "${NEW_PATCH}"
+      update_k8s_build_image "${VERSION}" "${NEW_PATCH}"
     fi
   done
 done
