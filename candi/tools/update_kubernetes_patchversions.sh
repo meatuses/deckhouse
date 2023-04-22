@@ -42,14 +42,6 @@ function update_version_map() {
   fi
 }
 
-# Updates k8s build images map with new patchversion
-# update_k8s_build_image VERSION PATCH
-function update_k8s_build_image() {
-  local IMAGE_TAG
-  IMAGE_TAG="$(curl -s https://raw.githubusercontent.com/kubernetes/kubernetes/v${1}.${2}/build/build-image/cross/VERSION)"
-  yq -i e ".\"${1}.${2}\" = \"${IMAGE_TAG}\""  ../../modules/000-common/images/kubernetes/k8s_build_images.yml
-}
-
 check_requirements
 
 for VERSION in $(yq e ../version_map.yml -o json | jq -r '.k8s | keys[]'); do
@@ -61,7 +53,6 @@ for VERSION in $(yq e ../version_map.yml -o json | jq -r '.k8s | keys[]'); do
       PR_DESCRIPTION="${PR_DESCRIPTION}$(echo -e "\n* New kubernetes patch version ${VERSION}.${NEW_PATCH}.")"
       CREATE_PR=true
       update_version_map "${VERSION}" "${NEW_PATCH}"
-      update_k8s_build_image "${VERSION}" "${NEW_PATCH}"
     fi
   done
 done
