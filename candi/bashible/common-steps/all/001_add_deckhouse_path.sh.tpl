@@ -1,4 +1,3 @@
-#!/bin/bash
 # Copyright 2021 Flant JSC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,5 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -Eeo pipefail
-rm -f /opt/deckhouse/bin/jq
+#!/bin/bash
+
+bb-sync-file /etc/profile.d/02-deckhouse-path.sh - << "EOF"
+export PATH="/opt/deckhouse/bin:$PATH"
+EOF
