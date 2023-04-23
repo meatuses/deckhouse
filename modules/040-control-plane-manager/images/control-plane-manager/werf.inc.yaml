@@ -9,13 +9,12 @@ import:
   add: /src/_output/bin
   to: /
   includePaths:
-  - kubeadm-{{ $version }}
+  - kubeadm
   before: install
 - artifact: {{ $.ModuleName }}/controller-artifact
   add: /controller
   to: /controller
   before: install
-shell:
 docker:
   ENTRYPOINT: ["/controller"]
 {{- end }}

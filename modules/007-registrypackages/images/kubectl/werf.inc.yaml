@@ -6,19 +6,31 @@
 image: {{ $.ModuleName }}/{{ $.ImageName }}-{{ $image_version }}
 from: {{ $.Images.BASE_SCRATCH }}
 import:
-- artifact: common/kubernetes-artifact-{{ $version | replace "." "-" }}
-  add: /src/_output/bin/kubectl
-  to: /kubectl
+- artifact: {{ $.ModuleName }}/{{ $.ImageName }}-artifact-{{ $image_version }}
+  add: /
+  to: /
+  includePaths:
+  - kubectl
+  - install
+  - uninstall
   before: setup
+docker:
+  LABEL:
+    distro: all
+    version: all
+    kubectl: {{ printf "%s.%s" $version $patch }}
+---
+artifact: {{ $.ModuleName }}/{{ $.ImageName }}-artifact-{{ $image_version }}
+from: {{ $.Images.BASE_SCRATCH }}
 git:
 - add: /modules/007-{{ $.ModuleName }}/images/{{ $.ImageName }}/scripts
   to: /
   stageDependencies:
     setup:
     - '**/*'
-docker:
-  LABEL:
-    distro: all
-    version: all
-    kubectl: {{ printf "%s.%s" $version $patch }}
+import:
+- artifact: common/kubernetes-artifact-{{ $version | replace "." "-" }}
+  add: /src/_output/bin/kubectl
+  to: /kubectl
+  before: setup
 {{- end }}
