@@ -45,7 +45,7 @@ shell:
   - make all WHAT=cmd/kube-controller-manager
   - make all WHAT=cmd/kube-scheduler
   - make all WHAT=cmd/kube-proxy
-  - make all WHAT=cmd/kubelet
+  - make all WHAT=cmd/kubelet GOLDFLAGS="-s -w -extldflags \"-static\""
   - make all WHAT=cmd/kubectl
-  - make all WHAT=cmd/kubeadm
+  - make all WHAT=cmd/kubeadm GOLDFLAGS="-s -w -extldflags \"-static\""
 {{- end }}
