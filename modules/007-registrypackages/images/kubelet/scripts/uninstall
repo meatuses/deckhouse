@@ -14,5 +14,7 @@
 # limitations under the License.
 
 set -Eeo pipefail
-apt-mark unhold kubelet
-dpkg -r kubelet
+rm -f /opt/deckhouse/bin/kubelet
+systemctl disable kubelet.service
+rm -f /lib/systemd/system/kubelet.service
+systemctl daemon-reload
