@@ -43,7 +43,7 @@ require (
 	github.com/evanphx/json-patch v5.6.0+incompatible // indirect
 	github.com/exponent-io/jsonpath v0.0.0-20151013193312-d6023ce2651d // indirect
 	github.com/fatih/color v1.13.0 // indirect
-	github.com/flant/addon-operator v1.1.4-0.20230424155453-7589c87fe851 // indirect
+	github.com/flant/addon-operator v1.1.4-0.20230424174247-f76a61aa4e86 // indirect
 	github.com/flant/kube-client v0.25.0 // indirect
 	github.com/flant/libjq-go v1.6.2-0.20200616114952-907039e8a02a // indirect
 	github.com/flant/shell-operator v1.1.3 // indirect

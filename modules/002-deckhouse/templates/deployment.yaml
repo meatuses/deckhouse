@@ -154,6 +154,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+            - name: ADDON_OPERATOR_REGISTER_MODULES
+              value: "true"
             - name: HELM3LIB
               value: "yes"
             - name: HELM_HISTORY_MAX
