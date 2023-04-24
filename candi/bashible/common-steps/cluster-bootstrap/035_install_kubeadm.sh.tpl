@@ -1,4 +1,3 @@
-#!/bin/bash
 # Copyright 2021 Flant JSC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -Eeo pipefail
-yum versionlock delete kubelet
-rpm -e kubelet
+{{- $kubernetesCniVersion := "1.2.0" | replace "." "" }}
+bb-rp-install "kubeadm:{{ index .images.registrypackages (printf "kubeadm%s" $kubernetesVersion) }}" "kubelet:{{ index .images.registrypackages (printf "kubelet%s" $kubernetesVersion) }}" "kubectl:{{ index .images.registrypackages (printf "kubectl%s" $kubernetesVersion) }}" "crictl:{{ index .images.registrypackages (printf "crictl%s" $kubernetesMajorVersion) }}" "kubernetes-cni:{{ index .images.registrypackages (printf "kubernetesCni%s" $kubernetesCniVersion) }}"

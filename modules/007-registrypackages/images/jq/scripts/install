@@ -15,4 +15,4 @@
 
 set -Eeo pipefail
 mkdir -p /opt/deckhouse/bin
-cp jq /opt/deckhouse/bin
+cp -f jq /opt/deckhouse/bin

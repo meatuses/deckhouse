@@ -15,4 +15,4 @@
 
 set -Eeo pipefail
 mkdir -p /opt/deckhouse/bin
-cp kubeadm /opt/deckhouse/bin
+cp -f kubeadm /opt/deckhouse/bin
