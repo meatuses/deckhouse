@@ -38,7 +38,7 @@ docker:
     flannel: {{ $flannel_version }}
 ---
 artifact: {{ $.ModuleName }}/{{ $.ImageName }}-artifact-{{ $image_version }}
-from: {{ $.Images.BASE_SCRATCH }}
+from: {{ $.Images.BASE_ALPINE }}
 git:
 - add: /modules/007-{{ $.ModuleName }}/images/{{ $.ImageName }}/scripts
   to: /
