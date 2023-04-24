@@ -12,8 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-{{- $kubernetesVersion := printf "%s%s" (.kubernetesVersion | toString) (index .k8s .kubernetesVersion "patch" | toString) | replace "." "" }}
-{{- $kubernetesMajorVersion := .kubernetesVersion | toString | replace "." "" }}
-{{- $kubernetesCniVersion := index .k8s .kubernetesVersion "cniVersion" | toString | replace "." "" }}
-
-bb-rp-install "kubeadm:{{ index .images.registrypackages (printf "kubeadm%s" $kubernetesVersion) }}" "kubelet:{{ index .images.registrypackages (printf "kubeletCentos%s" $kubernetesVersion) }}" "kubectl:{{ index .images.registrypackages (printf "kubectlCentos%s" $kubernetesVersion) }}" "crictl:{{ index .images.registrypackages (printf "crictl%s" $kubernetesMajorVersion) }}" "kubernetes-cni:{{ index .images.registrypackages (printf "kubernetesCniCentos%s" $kubernetesCniVersion) }}"
+{{- $kubernetesCniVersion := "1.2.0" | replace "." "" }}
+bb-rp-install "kubeadm:{{ index .images.registrypackages (printf "kubeadm%s" $kubernetesVersion) }}" "kubelet:{{ index .images.registrypackages (printf "kubeletCentos%s" $kubernetesVersion) }}" "kubectl:{{ index .images.registrypackages (printf "kubectlCentos%s" $kubernetesVersion) }}" "crictl:{{ index .images.registrypackages (printf "crictl%s" $kubernetesMajorVersion) }}" "kubernetes-cni:{{ index .images.registrypackages (printf "kubernetesCni%s" $kubernetesCniVersion) }}"

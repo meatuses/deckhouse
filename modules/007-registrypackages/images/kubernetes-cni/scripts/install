@@ -14,6 +14,7 @@
 # limitations under the License.
 
 set -Eeo pipefail
-apt-mark unhold kubernetes-cni
-dpkg -r kubernetes-cni
-rm -f /opt/cni/bin/flannel
+mkdir -p /opt/cni/bin
+for plugin in bandwidth bridge dhcp dummy firewall host-device host-local ipvlan loopback macvlan portmap ptp sbr static tuning vlan vrf flannel; do
+  cp -f ${plugin} /opt/cni/bin/${plugin}
+done

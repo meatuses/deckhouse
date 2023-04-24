@@ -14,6 +14,6 @@
 # limitations under the License.
 
 set -Eeo pipefail
-yum versionlock delete kubernetes-cni
-rpm -e kubernetes-cni
-rm -f /opt/cni/bin/flannel
+for plugin in bandwidth bridge dhcp dummy firewall host-device host-local ipvlan loopback macvlan portmap ptp sbr static tuning vlan vrf flannel; do
+  rm -f /opt/cni/bin/${plugin}
+done

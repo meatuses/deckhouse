@@ -107,7 +107,6 @@ k8s:
   '1.22':
     status: available
     patch: 17
-    cniVersion: 1.1.1
     bashible: &bashible_k8s_ge_1_22
       !!merge <<: *bashible
       ubuntu:
@@ -160,7 +159,6 @@ k8s:
   '1.24':
     status: available
     patch: 13
-    cniVersion: 1.2.0
     bashible: *bashible_k8s_ge_1_22
     ccm:
       openstack: v1.24.2
@@ -180,7 +178,6 @@ k8s:
   '1.25':
     status: available
     patch: 9
-    cniVersion: 1.2.0
     bashible: *bashible_k8s_ge_1_22
     ccm:
       openstack: v1.25.3
@@ -200,7 +197,6 @@ k8s:
   '1.26':
     status: available
     patch: 4
-    cniVersion: 1.2.0
     bashible: *bashible_k8s_ge_1_22
     ccm:
       openstack: v1.26.1
