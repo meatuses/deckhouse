@@ -1,4 +1,3 @@
-{{- $cri_tools_version := "1.24.2" }}
 {{- range $key, $value := .CandiVersionMap.k8s }}
   {{- $version := $key | toString }}
   {{- $patch := $value.patch | toString }}
@@ -11,29 +10,27 @@ import:
   add: /
   to: /
   includePaths:
-  - kubeadm
+  - kubectl
   - install
   - uninstall
   before: setup
 docker:
   LABEL:
-    distro: altlinux
+    distro: all
     version: all
-    kubeadm: {{ printf "%s.%s" $version $patch }}
-    cri-tools: {{ $cri_tools_version }}
+    kubectl: {{ printf "%s.%s" $version $patch }}
 ---
 artifact: {{ $.ModuleName }}/{{ $.ImageName }}-artifact-{{ $image_version }}
-from: {{ $.Images.BASE_ALPINE }}
+from: {{ $.Images.BASE_SCRATCH }}
 git:
-  - add: /modules/007-{{ $.ModuleName }}/images/{{ $.ImageName }}/scripts
-    to: /
-    stageDependencies:
-      setup:
-      - '**/*'
-shell:
-  beforeInstall:
-  - apk add --no-cache curl
-  setup:
-  - curl -sfL https://dl.k8s.io/release/v{{ $version }}.{{ $patch }}/bin/linux/amd64/kubeadm --output /kubeadm
-  - chmod +x /kubeadm
+- add: /modules/007-{{ $.ModuleName }}/images/{{ $.ImageName }}/scripts
+  to: /
+  stageDependencies:
+    setup:
+    - '**/*'
+import:
+- artifact: common/kubernetes-artifact-{{ $version | replace "." "-" }}
+  add: /src/_output/bin/kubeadm
+  to: /kubectl
+  before: setup
 {{- end }}

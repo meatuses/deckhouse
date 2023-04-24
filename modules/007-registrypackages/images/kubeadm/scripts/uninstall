@@ -14,5 +14,4 @@
 # limitations under the License.
 
 set -Eeo pipefail
-dpkg -i -E cri-tools_amd64.deb kubeadm_amd64.deb
-apt-mark hold kubeadm cri-tools
+rm -f /opt/deckhouse/bin/kubeadm

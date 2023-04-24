@@ -16,4 +16,4 @@
 {{- $kubernetesMajorVersion := .kubernetesVersion | toString | replace "." "" }}
 {{- $kubernetesCniVersion := index .k8s .kubernetesVersion "cniVersion" | toString | replace "." "" }}
 
-bb-rp-install "kubeadm:{{ index .images.registrypackages (printf "kubeadmCentos%s" $kubernetesVersion) }}" "kubelet:{{ index .images.registrypackages (printf "kubeletCentos%s" $kubernetesVersion) }}" "kubectl:{{ index .images.registrypackages (printf "kubectlCentos%s" $kubernetesVersion) }}" "crictl:{{ index .images.registrypackages (printf "crictl%s" $kubernetesMajorVersion) }}" "kubernetes-cni:{{ index .images.registrypackages (printf "kubernetesCniCentos%s" $kubernetesCniVersion) }}"
+bb-rp-install "kubeadm:{{ index .images.registrypackages (printf "kubeadm%s" $kubernetesVersion) }}" "kubelet:{{ index .images.registrypackages (printf "kubeletCentos%s" $kubernetesVersion) }}" "kubectl:{{ index .images.registrypackages (printf "kubectlCentos%s" $kubernetesVersion) }}" "crictl:{{ index .images.registrypackages (printf "crictl%s" $kubernetesMajorVersion) }}" "kubernetes-cni:{{ index .images.registrypackages (printf "kubernetesCniCentos%s" $kubernetesCniVersion) }}"
