@@ -37,7 +37,7 @@ func InitBasic(globalHooksDir string, modulesDir string) (*module_manager.Module
 		GlobalHooksDir: globalHooksDir,
 		TempDir:        tempDir,
 	}
-	mm := module_manager.NewModuleManager(context.Background(), dirs, nil)
+	mm := module_manager.NewModuleManager(context.Background(), dirs, nil, false)
 
 	err := mm.Init()
 	if err != nil {
