@@ -14,5 +14,5 @@
 # limitations under the License.
 
 set -Eeo pipefail
-cd /opt/cni/bin
-rm -f bandwidth bridge dhcp dummy firewall host-device host-local ipvlan loopback macvlan portmap ptp sbr static tuning vlan vrf flannel
+apt-mark unhold containerd.io
+dpkg -r containerd.io

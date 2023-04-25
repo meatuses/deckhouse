@@ -14,5 +14,25 @@
 # limitations under the License.
 
 set -Eeo pipefail
-cd /opt/cni/bin
-rm -f bandwidth bridge dhcp dummy firewall host-device host-local ipvlan loopback macvlan portmap ptp sbr static tuning vlan vrf flannel
+mkdir -p /opt/deckhouse/bin
+
+enable_selinux=false
+
+if type -p getenforce &>/dev/null && [[ $(getenforce) != Disabled ]]; then
+  enable_selinux=true
+fi
+
+mkdir -p /etc/containerd
+
+cat << EOF | sudo tee /etc/containerd/config.toml
+version = 2
+[plugins]
+  [plugins."io.containerd.grpc.v1.cri"]
+    enable_selinux = ${enable_selinux}
+EOF
+
+cp -f containerd containerd-shim containerd-shim-runc-v1 containerd-shim-runc-v2 ctr runc /opt/deckhouse/bin
+
+cp -f containerd.service /lib/systemd/system
+systemctl daemon-reload
+systemctl enable containerd.service
